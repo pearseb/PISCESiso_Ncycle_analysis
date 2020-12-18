@@ -1,0 +1,205 @@
+
+can data/all
+can var/all
+can reg/all
+
+set mem/size=3000
+
+use ETOPO_picontrol_2nd_ptrc_1801-2100.nc	! 1
+use ETOPO_picontrol_ndep_ptrc_1801-2100.nc	! 2
+use ETOPO_future_ptrc_1850-2100.nc		! 3
+use ETOPO_future_ndep_ptrc_1850-2100.nc		! 4
+
+use ETOPO_picontrol_depthzone_mask.nc		! 5
+use ETOPO_future_depthzone_mask.nc		! 6
+
+go /users/pearseb/d15n.jnl
+
+use ETOPO_picontrol_votemper_annualave.nc	! 7
+use ETOPO_future_votemper_annualave.nc	! 8
+
+let no3a = if dic eq 0 then 1/0 else no3
+let po4a = if dic eq 0 then 1/0 else po4
+let nsta = no3a - po4a*16
+
+! select different depths
+let no3a_ez = if euph_pic[d=5] eq 1 then no3a[d=1] else 1/0
+let no3a_utz = if utz_pic[d=5] eq 1 then no3a[d=1] else 1/0
+let no3a_ltz = if ltz_pic[d=5] eq 1 then no3a[d=1] else 1/0
+
+let po4a_ez = if euph_pic[d=5] eq 1 then po4a[d=1] else 1/0
+let po4a_utz = if utz_pic[d=5] eq 1 then po4a[d=1] else 1/0
+let po4a_ltz = if ltz_pic[d=5] eq 1 then po4a[d=1] else 1/0
+
+let nsta_ez = if euph_pic[d=5] eq 1 then nsta[d=1] else 1/0
+let nsta_utz = if utz_pic[d=5] eq 1 then nsta[d=1] else 1/0
+let nsta_ltz = if ltz_pic[d=5] eq 1 then nsta[d=1] else 1/0
+
+let d15n_no3_ez = if euph_pic[d=5] eq 1 then d15n_no3[d=1] else 1/0
+let d15n_no3_utz = if utz_pic[d=5] eq 1 then d15n_no3[d=1] else 1/0
+let d15n_no3_ltz = if ltz_pic[d=5] eq 1 then d15n_no3[d=1] else 1/0
+
+let d15n_pom_ez = if euph_pic[d=5] eq 1 then d15n_pom[d=1] else 1/0
+let d15n_pom_utz = if utz_pic[d=5] eq 1 then d15n_pom[d=1] else 1/0
+let d15n_pom_ltz = if ltz_pic[d=5] eq 1 then d15n_pom[d=1] else 1/0
+
+let no3a_ez_zave = no3a_ez[z=@ave] 
+let no3a_utz_zave = no3a_utz[z=@ave]
+let no3a_ltz_zave = no3a_ltz[z=@ave]
+
+let po4a_ez_zave = po4a_ez[z=@ave] 
+let po4a_utz_zave = po4a_utz[z=@ave]
+let po4a_ltz_zave = po4a_ltz[z=@ave]
+
+let nsta_ez_zave = nsta_ez[z=@ave] 
+let nsta_utz_zave = nsta_utz[z=@ave]
+let nsta_ltz_zave = nsta_ltz[z=@ave]
+
+let d15n_no3_ez_zave = d15n_no3_ez[z=@ave] 
+let d15n_no3_utz_zave = d15n_no3_utz[z=@ave]
+let d15n_no3_ltz_zave = d15n_no3_ltz[z=@ave]
+
+let d15n_pom_ez_zave = d15n_pom_ez[z=@ave] 
+let d15n_pom_utz_zave = d15n_pom_utz[z=@ave]
+let d15n_pom_ltz_zave = d15n_pom_ltz[z=@ave]
+
+
+save/file="ETOPO_picontrol_1y_no3_ez_utz_ltz.nc"/clobber no3a_ez_zave, no3a_utz_zave, no3a_ltz_zave
+save/file="ETOPO_picontrol_1y_po4_ez_utz_ltz.nc"/clobber po4a_ez_zave, po4a_utz_zave, po4a_ltz_zave
+save/file="ETOPO_picontrol_1y_nst_ez_utz_ltz.nc"/clobber nsta_ez_zave, nsta_utz_zave, nsta_ltz_zave
+save/file="ETOPO_picontrol_1y_d15n_no3_ez_utz_ltz.nc"/clobber d15n_no3_ez_zave, d15n_no3_utz_zave, d15n_no3_ltz_zave
+save/file="ETOPO_picontrol_1y_d15n_pom_ez_utz_ltz.nc"/clobber d15n_pom_ez_zave, d15n_pom_utz_zave, d15n_pom_ltz_zave
+
+! select different depths
+let no3a_ez = if euph_pic[d=5] eq 1 then no3a[d=2] else 1/0
+let no3a_utz = if utz_pic[d=5] eq 1 then no3a[d=2] else 1/0
+let no3a_ltz = if ltz_pic[d=5] eq 1 then no3a[d=2] else 1/0
+
+let po4a_ez = if euph_pic[d=5] eq 1 then po4a[d=2] else 1/0
+let po4a_utz = if utz_pic[d=5] eq 1 then po4a[d=2] else 1/0
+let po4a_ltz = if ltz_pic[d=5] eq 1 then po4a[d=2] else 1/0
+
+let nsta_ez = if euph_pic[d=5] eq 1 then nsta[d=2] else 1/0
+let nsta_utz = if utz_pic[d=5] eq 1 then nsta[d=2] else 1/0
+let nsta_ltz = if ltz_pic[d=5] eq 1 then nsta[d=2] else 1/0
+
+let d15n_no3_ez = if euph_pic[d=5] eq 1 then d15n_no3[d=2] else 1/0
+let d15n_no3_utz = if utz_pic[d=5] eq 1 then d15n_no3[d=2] else 1/0
+let d15n_no3_ltz = if ltz_pic[d=5] eq 1 then d15n_no3[d=2] else 1/0
+
+let d15n_pom_ez = if euph_pic[d=5] eq 1 then d15n_pom[d=2] else 1/0
+let d15n_pom_utz = if utz_pic[d=5] eq 1 then d15n_pom[d=2] else 1/0
+let d15n_pom_ltz = if ltz_pic[d=5] eq 1 then d15n_pom[d=2] else 1/0
+
+save/file="ETOPO_picontrol_ndep_1y_no3_ez_utz_ltz.nc"/clobber no3a_ez_zave, no3a_utz_zave, no3a_ltz_zave
+save/file="ETOPO_picontrol_ndep_1y_po4_ez_utz_ltz.nc"/clobber po4a_ez_zave, po4a_utz_zave, po4a_ltz_zave
+save/file="ETOPO_picontrol_ndep_1y_nst_ez_utz_ltz.nc"/clobber nsta_ez_zave, nsta_utz_zave, nsta_ltz_zave
+save/file="ETOPO_picontrol_ndep_1y_d15n_no3_ez_utz_ltz.nc"/clobber d15n_no3_ez_zave, d15n_no3_utz_zave, d15n_no3_ltz_zave
+save/file="ETOPO_picontrol_ndep_1y_d15n_pom_ez_utz_ltz.nc"/clobber d15n_pom_ez_zave, d15n_pom_utz_zave, d15n_pom_ltz_zave
+
+
+let no3a_ez = if euph_fut[d=6] eq 1 then no3a[d=3] else 1/0
+let no3a_utz = if utz_fut[d=6] eq 1 then no3a[d=3] else 1/0
+let no3a_ltz = if ltz_fut[d=6] eq 1 then no3a[d=3] else 1/0
+
+let po4a_ez = if euph_fut[d=6] eq 1 then po4a[d=3] else 1/0
+let po4a_utz = if utz_fut[d=6] eq 1 then po4a[d=3] else 1/0
+let po4a_ltz = if ltz_fut[d=6] eq 1 then po4a[d=3] else 1/0
+
+let nsta_ez = if euph_fut[d=6] eq 1 then nsta[d=3] else 1/0
+let nsta_utz = if utz_fut[d=6] eq 1 then nsta[d=3] else 1/0
+let nsta_ltz = if ltz_fut[d=6] eq 1 then nsta[d=3] else 1/0
+
+let d15n_no3_ez = if euph_fut[d=6] eq 1 then d15n_no3[d=3] else 1/0
+let d15n_no3_utz = if utz_fut[d=6] eq 1 then d15n_no3[d=3] else 1/0
+let d15n_no3_ltz = if ltz_fut[d=6] eq 1 then d15n_no3[d=3] else 1/0
+
+let d15n_pom_ez = if euph_fut[d=6] eq 1 then d15n_pom[d=3] else 1/0
+let d15n_pom_utz = if utz_fut[d=6] eq 1 then d15n_pom[d=3] else 1/0
+let d15n_pom_ltz = if ltz_fut[d=6] eq 1 then d15n_pom[d=3] else 1/0
+
+save/file="ETOPO_future_1y_no3_ez_utz_ltz.nc"/clobber no3a_ez_zave, no3a_utz_zave, no3a_ltz_zave
+save/file="ETOPO_future_1y_po4_ez_utz_ltz.nc"/clobber po4a_ez_zave, po4a_utz_zave, po4a_ltz_zave
+save/file="ETOPO_future_1y_nst_ez_utz_ltz.nc"/clobber nsta_ez_zave, nsta_utz_zave, nsta_ltz_zave
+save/file="ETOPO_future_1y_d15n_no3_ez_utz_ltz.nc"/clobber d15n_no3_ez_zave, d15n_no3_utz_zave, d15n_no3_ltz_zave
+save/file="ETOPO_future_1y_d15n_pom_ez_utz_ltz.nc"/clobber d15n_pom_ez_zave, d15n_pom_utz_zave, d15n_pom_ltz_zave
+
+
+
+let no3a_ez = if euph_fut[d=6] eq 1 then no3a[d=4] else 1/0
+let no3a_utz = if utz_fut[d=6] eq 1 then no3a[d=4] else 1/0
+let no3a_ltz = if ltz_fut[d=6] eq 1 then no3a[d=4] else 1/0
+
+let po4a_ez = if euph_fut[d=6] eq 1 then po4a[d=4] else 1/0
+let po4a_utz = if utz_fut[d=6] eq 1 then po4a[d=4] else 1/0
+let po4a_ltz = if ltz_fut[d=6] eq 1 then po4a[d=4] else 1/0
+
+let nsta_ez = if euph_fut[d=6] eq 1 then nsta[d=4] else 1/0
+let nsta_utz = if utz_fut[d=6] eq 1 then nsta[d=4] else 1/0
+let nsta_ltz = if ltz_fut[d=6] eq 1 then nsta[d=4] else 1/0
+
+let d15n_no3_ez = if euph_fut[d=6] eq 1 then d15n_no3[d=4] else 1/0
+let d15n_no3_utz = if utz_fut[d=6] eq 1 then d15n_no3[d=4] else 1/0
+let d15n_no3_ltz = if ltz_fut[d=6] eq 1 then d15n_no3[d=4] else 1/0
+
+let d15n_pom_ez = if euph_fut[d=6] eq 1 then d15n_pom[d=4] else 1/0
+let d15n_pom_utz = if utz_fut[d=6] eq 1 then d15n_pom[d=4] else 1/0
+let d15n_pom_ltz = if ltz_fut[d=6] eq 1 then d15n_pom[d=4] else 1/0
+
+save/file="ETOPO_future_ndep_1y_no3_ez_utz_ltz.nc"/clobber no3a_ez_zave, no3a_utz_zave, no3a_ltz_zave
+save/file="ETOPO_future_ndep_1y_po4_ez_utz_ltz.nc"/clobber po4a_ez_zave, po4a_utz_zave, po4a_ltz_zave
+save/file="ETOPO_future_ndep_1y_nst_ez_utz_ltz.nc"/clobber nsta_ez_zave, nsta_utz_zave, nsta_ltz_zave
+save/file="ETOPO_future_ndep_1y_d15n_no3_ez_utz_ltz.nc"/clobber d15n_no3_ez_zave, d15n_no3_utz_zave, d15n_no3_ltz_zave
+save/file="ETOPO_future_ndep_1y_d15n_pom_ez_utz_ltz.nc"/clobber d15n_pom_ez_zave, d15n_pom_utz_zave, d15n_pom_ltz_zave
+
+
+let temp_ez = if euph_pic[d=5] eq 1 then votemper[d=7] else 1/0
+let temp_utz = if utz_pic[d=5] eq 1 then votemper[d=7] else 1/0
+let temp_ltz = if ltz_pic[d=5] eq 1 then votemper[d=7] else 1/0
+
+let temp_ez_zave = temp_ez[z=@ave] 
+let temp_utz_zave = temp_utz[z=@ave]
+let temp_ltz_zave = temp_ltz[z=@ave]
+
+save/file="ETOPO_picontrol_1y_temp_ez_utz_ltz.nc"/clobber temp_ez_zave, temp_utz_zave, temp_ltz_zave
+
+
+let temp_ez = if euph_fut[d=6,l=1:250] eq 1 then votemper[d=8,l=2:251] else 1/0
+let temp_utz = if utz_fut[d=6,l=1:250] eq 1 then votemper[d=8,l=2:251] else 1/0
+let temp_ltz = if ltz_fut[d=6,l=1:250] eq 1 then votemper[d=8,l=2:251] else 1/0
+
+let temp_ez_zave = temp_ez[z=@ave] 
+let temp_utz_zave = temp_utz[z=@ave]
+let temp_ltz_zave = temp_ltz[z=@ave]
+
+save/file="ETOPO_future_1y_temp_ez_utz_ltz.nc"/clobber temp_ez_zave, temp_utz_zave, temp_ltz_zave
+
+
+can data/all
+can var/all
+can reg/all
+
+use ETOPO_picontrol_2nd_diad_1801-2100.nc	! 1
+use ETOPO_picontrol_ndep_diad_1801-2100.nc	! 2
+use ETOPO_future_diad_1850-2100.nc		! 3
+use ETOPO_future_ndep_diad_1850-2100.nc		! 4
+
+use ETOPO_picontrol_depthzone_mask.nc		! 5
+use ETOPO_future_depthzone_mask.nc		! 6
+
+
+let prod = (ppnewd+ppnewn+ppregd+ppregn)*86400*365*12
+let npp_zint = if ph[k=1] eq 0 then 1/0 else prod[z=@din]
+
+let fix = (nfix)*86400*365*14
+let fix_zint = if ph[k=1] eq 0 then 1/0 else fix[z=@din]
+
+save/file="ETOPO_picontrol_1y_npp.nc"/clobber npp_zint[d=1]
+save/file="ETOPO_picontrol_ndep_1y_npp.nc"/clobber npp_zint[d=2]
+save/file="ETOPO_future_1y_npp.nc"/clobber npp_zint[d=3]
+save/file="ETOPO_future_ndep_1y_npp.nc"/clobber npp_zint[d=4]
+
+save/file="ETOPO_picontrol_1y_nfix.nc"/clobber fix_zint[d=1]
+save/file="ETOPO_picontrol_ndep_1y_nfix.nc"/clobber fix_zint[d=2]
+save/file="ETOPO_future_1y_nfix.nc"/clobber fix_zint[d=3]
+save/file="ETOPO_future_ndep_1y_nfix.nc"/clobber fix_zint[d=4]

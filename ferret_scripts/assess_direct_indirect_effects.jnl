@@ -1,0 +1,129 @@
+
+can data/all
+can var/all
+can reg/all
+
+use ETOPO_picontrol_2nd_ptrc_1801-2100.nc
+use ETOPO_future_ptrc_1850-2100.nc
+use ETOPO_picontrol_futSST_ptrc_1851-2100.nc
+use ETOPO_future_piSST_ptrc_1851-2100.nc
+
+use ETOPO_picontrol_2nd_diad_1801-2100.nc
+use ETOPO_future_diad_1850-2100.nc
+use ETOPO_picontrol_futSST_diad_1851-2100.nc
+use ETOPO_future_piSST_diad_1851-2100.nc
+
+use ETOPO_picontrol_depthzone_mask.nc
+use ETOPO_future_depthzone_mask.nc
+
+let no3a = if dic[d=1,l=1] eq 0 then 1/0 else no3
+go /users/pearseb/d15n.jnl
+
+! euphotic and twilight zone averages
+let no3_pic = if euph_pic[d=9,l=1:300] eq 1 then no3a[d=1,l=1:300] else 1/0
+let no3_fut = if euph_fut[d=10,l=1:250] eq 1 then no3a[d=2,l=2:251] else 1/0
+let no3_dir = if euph_pic[d=9,l=1:250] eq 1 then no3a[d=3,l=1:250] else 1/0
+let no3_ind = if euph_fut[d=10,l=1:250] eq 1 then no3a[d=4,l=1:250] else 1/0
+
+let d15nno3_pic = if utz_pic[d=9,l=1:300] eq 1 then d15n_no3[d=1,l=1:300] else 1/0
+let d15nno3_fut = if utz_fut[d=10,l=1:250] eq 1 then d15n_no3[d=2,l=2:251] else 1/0
+let d15nno3_dir = if utz_pic[d=9,l=51:300] eq 1 then d15n_no3[d=3,l=1:250] else 1/0
+let d15nno3_ind = if utz_fut[d=10,l=1:250] eq 1 then d15n_no3[d=4,l=1:250] else 1/0
+
+let d15npom_pic = if utz_pic[d=9,l=1:300] eq 1 then d15n_pom[d=1,l=1:300] else 1/0
+let d15npom_fut = if utz_fut[d=10,l=1:250] eq 1 then d15n_pom[d=2,l=2:251] else 1/0
+let d15npom_dir = if utz_pic[d=9,l=51:300] eq 1 then d15n_pom[d=3,l=1:250] else 1/0
+let d15npom_ind = if utz_fut[d=10,l=1:250] eq 1 then d15n_pom[d=4,l=1:250] else 1/0
+
+let e15nreg_pic = if utz_pic[d=9,l=1:300] eq 1 then e15nreg[d=5,l=1:300] else 1/0
+let e15nreg_fut = if utz_fut[d=10,l=1:250] eq 1 then e15nreg[d=6,l=2:251] else 1/0
+let e15nreg_dir = if utz_pic[d=9,l=51:300] eq 1 then e15nreg[d=7,l=1:250] else 1/0
+let e15nreg_ind = if utz_fut[d=10,l=1:250] eq 1 then e15nreg[d=8,l=1:250] else 1/0
+
+
+! differences (i.e. climate change minus preindustrial control 2081-2100)
+let no3_fut_dif = no3_fut[z=@ave,l=231:250@ave]-no3_pic[z=@ave,l=281:300@ave]
+let no3_dir_dif = no3_dir[z=@ave,l=281:300@ave]-no3_pic[z=@ave,l=281:300@ave]
+let no3_ind_dif = no3_ind[z=@ave,l=231:250@ave]-no3_pic[z=@ave,l=281:300@ave]
+
+let d15nno3_fut_dif = d15nno3_fut[z=@ave,l=231:250@ave]-d15nno3_pic[z=@ave,l=281:300@ave]
+let d15nno3_dir_dif = d15nno3_dir[z=@ave,l=281:300@ave]-d15nno3_pic[z=@ave,l=281:300@ave]
+let d15nno3_ind_dif = d15nno3_ind[z=@ave,l=231:250@ave]-d15nno3_pic[z=@ave,l=281:300@ave]
+
+let d15npom_fut_dif = d15npom_fut[z=@ave,l=231:250@ave]-d15npom_pic[z=@ave,l=281:300@ave]
+let d15npom_dir_dif = d15npom_dir[z=@ave,l=281:300@ave]-d15npom_pic[z=@ave,l=281:300@ave]
+let d15npom_ind_dif = d15npom_ind[z=@ave,l=231:250@ave]-d15npom_pic[z=@ave,l=281:300@ave]
+
+let e15nreg_fut_dif = e15nreg_fut[z=@ave,l=231:250@ave]-e15nreg_pic[z=@ave,l=281:300@ave]
+let e15nreg_dir_dif = e15nreg_dir[z=@ave,l=281:300@ave]-e15nreg_pic[z=@ave,l=281:300@ave]
+let e15nreg_ind_dif = e15nreg_ind[z=@ave,l=231:250@ave]-e15nreg_pic[z=@ave,l=281:300@ave]
+
+
+!set mem/size=3000
+!
+!set win/aspect=0.65 1
+!set vi ul; sha/lev=(-inf)(0,20,1)(inf) no3_pic[z=@ave,l=281:300@ave]; cont/o/lev=2D; go fland
+!set vi ur; sha/lev=(-inf)(-3,3,0.2)(inf)/pal=blue_orange no3_fut_dif; cont/o/lev=(0); go fland
+!set vi ll; sha/lev=(-inf)(-3,3,0.2)(inf)/pal=blue_orange no3_dir_dif; cont/o/lev=(0); go fland
+!set vi lr; sha/lev=(-inf)(-3,3,0.2)(inf)/pal=blue_orange no3_ind_dif; cont/o/lev=(0); go fland
+!
+!set win/aspect=0.65 2
+!set vi ul; sha/lev=(-inf)(0,10,0.5)(inf) d15nno3_pic[z=@ave,l=281:300@ave]; cont/o/lev=1D; go fland
+!set vi ur; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_fut_dif; cont/o/lev=(0); go fland
+!set vi ll; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_dir_dif; cont/o/lev=(0); go fland
+!set vi lr; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_ind_dif; cont/o/lev=(0); go fland
+!
+!set win/aspect=0.65 3
+!set vi ul; sha/lev=(-inf)(0,10,0.5)(inf) d15npom_pic[z=@ave,l=281:300@ave]; cont/o/lev=1D; go fland
+!set vi ur; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15npom_fut_dif; cont/o/lev=(0); go fland
+!set vi ll; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15npom_dir_dif; cont/o/lev=(0); go fland
+!set vi lr; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15npom_ind_dif; cont/o/lev=(0); go fland
+!
+!set win/aspect=0.65 4
+!set vi ul; sha/lev=(0,5,0.2) e15nreg_pic[z=@ave,l=281:300@ave]; cont/o/lev=1D; go fland
+!set vi ur; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange e15nreg_fut_dif; cont/o/lev=(0); go fland
+!set vi ll; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange e15nreg_dir_dif; cont/o/lev=(0); go fland
+!set vi lr; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange e15nreg_ind_dif; cont/o/lev=(0); go fland
+
+
+let npp = (ppnewn+ppnewd+ppregn+ppregd)*86400*365*14*(16/122.0)
+let gra = (graz1+graz2)*86400*365*14*(16/122.0)
+let fix = nfix*86400*365*14 
+let den = denit*86400*365*14 
+let sden = sden3d*86400*365*14 
+
+let npp_fut_dif = npp[z=@din,l=231:250@ave,d=6]-npp[z=@din,l=281:300@ave,d=5]
+let npp_dir_dif = npp[z=@din,l=281:300@ave,d=7]-npp[z=@din,l=281:300@ave,d=5]
+let npp_ind_dif = npp[z=@din,l=231:250@ave,d=8]-npp[z=@din,l=281:300@ave,d=5]
+ 
+let gra_fut_dif = gra[z=@din,l=231:250@ave,d=6]-gra[z=@din,l=281:300@ave,d=5]
+let gra_dir_dif = gra[z=@din,l=281:300@ave,d=7]-gra[z=@din,l=281:300@ave,d=5]
+let gra_ind_dif = gra[z=@din,l=231:250@ave,d=8]-gra[z=@din,l=281:300@ave,d=5]
+ 
+let fix_fut_dif = fix[z=@din,l=231:250@ave,d=6]-fix[z=@din,l=281:300@ave,d=5]
+let fix_dir_dif = fix[z=@din,l=281:300@ave,d=7]-fix[z=@din,l=281:300@ave,d=5]
+let fix_ind_dif = fix[z=@din,l=231:250@ave,d=8]-fix[z=@din,l=281:300@ave,d=5]
+ 
+let den_fut_dif = den[z=@din,l=231:250@ave,d=6]-den[z=@din,l=281:300@ave,d=5]
+let den_dir_dif = den[z=@din,l=281:300@ave,d=7]-den[z=@din,l=281:300@ave,d=5]
+let den_ind_dif = den[z=@din,l=231:250@ave,d=8]-den[z=@din,l=281:300@ave,d=5]
+ 
+let sden_fut_dif = sden[z=@din,l=231:250@ave,d=6]-sden[z=@din,l=281:300@ave,d=5]
+let sden_dir_dif = sden[z=@din,l=281:300@ave,d=7]-sden[z=@din,l=281:300@ave,d=5]
+let sden_ind_dif = sden[z=@din,l=231:250@ave,d=8]-sden[z=@din,l=281:300@ave,d=5]
+ 
+
+message
+
+!!! save these difference plots to compare with FUT - PIC
+set mem/size=4000
+
+save/file="ETOPO_direct_indirect_effects.nc"/clobber no3_fut_dif, no3_dir_dif, no3_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append d15nno3_fut_dif, d15nno3_dir_dif, d15nno3_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append d15npom_fut_dif, d15npom_dir_dif, d15npom_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append e15nreg_fut_dif, e15nreg_dir_dif, e15nreg_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append npp_fut_dif, npp_dir_dif, npp_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append gra_fut_dif, gra_dir_dif, gra_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append fix_fut_dif, fix_dir_dif, fix_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append den_fut_dif, den_dir_dif, den_ind_dif
+save/file="ETOPO_direct_indirect_effects.nc"/append sden_fut_dif, sden_dir_dif, sden_ind_dif

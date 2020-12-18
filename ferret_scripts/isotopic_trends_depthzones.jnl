@@ -1,0 +1,165 @@
+
+can data/all
+can var/all
+can reg/all
+
+use ETOPO_picontrol_2nd_ptrc_1801-2100.nc	! 1
+use ETOPO_picontrol_ndep_ptrc_1801-2100.nc	! 2
+use ETOPO_future_ptrc_1850-2100.nc 		! 3
+use ETOPO_future_ndep_ptrc_1850-2100.nc 	! 4
+
+use /users/pearseb/BGCP_ETOPO_merged_alt.nc 	! 5
+
+use ETOPO_picontrol_depthzone_mask.nc		! 6
+use ETOPO_future_depthzone_mask.nc		! 7
+
+go /users/pearseb/d15n.jnl
+
+let no3a = if dic eq 0 then 1/0 else no3
+let po4a = if dic eq 0 then 1/0 else po4
+let nsta = no3a-16*po4a
+
+!!! get signal of d15n change in different depth zones
+
+let no3a_ez_pic = if euph_pic[d=6,l=1:300] eq 1 then no3a[l=1:300,d=1] else 1/0
+let no3a_utz_pic = if utz_pic[d=6,l=1:300] eq 1 then no3a[l=1:300,d=1] else 1/0
+let nsta_ez_pic = if euph_pic[d=6,l=1:300] eq 1 then nsta[l=1:300,d=1] else 1/0
+let nsta_utz_pic = if utz_pic[d=6,l=1:300] eq 1 then nsta[l=1:300,d=1] else 1/0
+let d15n_no3_ez_pic = if euph_pic[d=6,l=1:300] eq 1 then d15n_no3[l=1:300,d=1] else 1/0
+let d15n_no3_utz_pic = if utz_pic[d=6,l=1:300] eq 1 then d15n_no3[l=1:300,d=1] else 1/0
+let d15n_pom_ez_pic = if euph_pic[d=6,l=1:300] eq 1 then d15n_pom[l=1:300,d=1] else 1/0
+let d15n_pom_utz_pic = if utz_pic[d=6,l=1:300] eq 1 then d15n_pom[l=1:300,d=1] else 1/0
+
+let no3a_ez_picdep = if euph_pic[d=6,l=1:300] eq 1 then no3a[l=1:300,d=2] else 1/0
+let no3a_utz_picdep = if utz_pic[d=6,l=1:300] eq 1 then no3a[l=1:300,d=2] else 1/0
+let nsta_ez_picdep = if euph_pic[d=6,l=1:300] eq 1 then nsta[l=1:300,d=2] else 1/0
+let nsta_utz_picdep = if utz_pic[d=6,l=1:300] eq 1 then nsta[l=1:300,d=2] else 1/0
+let d15n_no3_ez_picdep = if euph_pic[d=6,l=1:300] eq 1 then d15n_no3[l=1:300,d=2] else 1/0
+let d15n_no3_utz_picdep = if utz_pic[d=6,l=1:300] eq 1 then d15n_no3[l=1:300,d=2] else 1/0
+let d15n_pom_ez_picdep = if euph_pic[d=6,l=1:300] eq 1 then d15n_pom[l=1:300,d=2] else 1/0
+let d15n_pom_utz_picdep = if utz_pic[d=6,l=1:300] eq 1 then d15n_pom[l=1:300,d=2] else 1/0
+
+let no3a_ez_fut = if euph_fut[d=7,l=1:250] eq 1 then no3a[l=2:251,d=3] else 1/0
+let no3a_utz_fut = if utz_fut[d=7,l=1:250] eq 1 then no3a[l=2:251,d=3] else 1/0
+let nsta_ez_fut = if euph_fut[d=7,l=1:250] eq 1 then nsta[l=2:251,d=3] else 1/0
+let nsta_utz_fut = if utz_fut[d=7,l=1:250] eq 1 then nsta[l=2:251,d=3] else 1/0
+let d15n_no3_ez_fut = if euph_fut[d=7,l=1:250] eq 1 then d15n_no3[l=2:251,d=3] else 1/0
+let d15n_no3_utz_fut = if utz_fut[d=7,l=1:250] eq 1 then d15n_no3[l=2:251,d=3] else 1/0
+let d15n_pom_ez_fut = if euph_fut[d=7,l=1:250] eq 1 then d15n_pom[l=2:251,d=3] else 1/0
+let d15n_pom_utz_fut = if utz_fut[d=7,l=1:250] eq 1 then d15n_pom[l=2:251,d=3] else 1/0
+
+let no3a_ez_dep = if euph_fut[d=7,l=1:250] eq 1 then no3a[l=2:251,d=4] else 1/0
+let no3a_utz_dep = if utz_fut[d=7,l=1:250] eq 1 then no3a[l=2:251,d=4] else 1/0
+let nsta_ez_dep = if euph_fut[d=7,l=1:250] eq 1 then nsta[l=2:251,d=4] else 1/0
+let nsta_utz_dep = if utz_fut[d=7,l=1:250] eq 1 then nsta[l=2:251,d=4] else 1/0
+let d15n_no3_ez_dep = if euph_fut[d=7,l=1:250] eq 1 then d15n_no3[l=2:251,d=4] else 1/0
+let d15n_no3_utz_dep = if utz_fut[d=7,l=1:250] eq 1 then d15n_no3[l=2:251,d=4] else 1/0
+let d15n_pom_ez_dep = if euph_fut[d=7,l=1:250] eq 1 then d15n_pom[l=2:251,d=4] else 1/0
+let d15n_pom_utz_dep = if utz_fut[d=7,l=1:250] eq 1 then d15n_pom[l=2:251,d=4] else 1/0
+
+let no3a_ez_picdepdif = no3a_ez_picdep[z=@ave,l=281:300@ave] - no3a_ez_pic[z=@ave,l=281:300@ave]
+let no3a_utz_picdepdif = no3a_utz_picdep[z=@ave,l=281:300@ave] - no3a_utz_pic[z=@ave,l=281:300@ave]
+let nsta_ez_picdepdif = nsta_ez_picdep[z=@ave,l=281:300@ave] - nsta_ez_pic[z=@ave,l=281:300@ave]
+let nsta_utz_picdepdif = nsta_utz_picdep[z=@ave,l=281:300@ave] - nsta_utz_pic[z=@ave,l=281:300@ave]
+let d15n_no3_ez_picdepdif = d15n_no3_ez_picdep[z=@ave,l=281:300@ave] - d15n_no3_ez_pic[z=@ave,l=281:300@ave]
+let d15n_no3_utz_picdepdif = d15n_no3_utz_picdep[z=@ave,l=281:300@ave] - d15n_no3_utz_pic[z=@ave,l=281:300@ave]
+let d15n_pom_ez_picdepdif = d15n_pom_ez_picdep[z=@ave,l=281:300@ave] - d15n_pom_ez_pic[z=@ave,l=281:300@ave]
+let d15n_pom_utz_picdepdif = d15n_pom_utz_picdep[z=@ave,l=281:300@ave] - d15n_pom_utz_pic[z=@ave,l=281:300@ave]
+
+let no3a_ez_futdif = no3a_ez_fut[z=@ave,l=232:251@ave] - no3a_ez_pic[z=@ave,l=281:300@ave]
+let no3a_utz_futdif = no3a_utz_fut[z=@ave,l=232:251@ave] - no3a_utz_pic[z=@ave,l=281:300@ave]
+let nsta_ez_futdif = nsta_ez_fut[z=@ave,l=232:251@ave] - nsta_ez_pic[z=@ave,l=281:300@ave]
+let nsta_utz_futdif = nsta_utz_fut[z=@ave,l=232:251@ave] - nsta_utz_pic[z=@ave,l=281:300@ave]
+let d15n_no3_ez_futdif = d15n_no3_ez_fut[z=@ave,l=232:251@ave] - d15n_no3_ez_pic[z=@ave,l=281:300@ave]
+let d15n_no3_utz_futdif = d15n_no3_utz_fut[z=@ave,l=232:251@ave] - d15n_no3_utz_pic[z=@ave,l=281:300@ave]
+let d15n_pom_ez_futdif = d15n_pom_ez_fut[z=@ave,l=232:251@ave] - d15n_pom_ez_pic[z=@ave,l=281:300@ave]
+let d15n_pom_utz_futdif = d15n_pom_utz_fut[z=@ave,l=232:251@ave] - d15n_pom_utz_pic[z=@ave,l=281:300@ave]
+
+let no3a_ez_depdif = no3a_ez_dep[z=@ave,l=232:251@ave] - no3a_ez_pic[z=@ave,l=281:300@ave]
+let no3a_utz_depdif = no3a_utz_dep[z=@ave,l=232:251@ave] - no3a_utz_pic[z=@ave,l=281:300@ave]
+let nsta_ez_depdif = nsta_ez_dep[z=@ave,l=232:251@ave] - nsta_ez_pic[z=@ave,l=281:300@ave]
+let nsta_utz_depdif = nsta_utz_dep[z=@ave,l=232:251@ave] - nsta_utz_pic[z=@ave,l=281:300@ave]
+let d15n_no3_ez_depdif = d15n_no3_ez_dep[z=@ave,l=232:251@ave] - d15n_no3_ez_pic[z=@ave,l=281:300@ave]
+let d15n_no3_utz_depdif = d15n_no3_utz_dep[z=@ave,l=232:251@ave] - d15n_no3_utz_pic[z=@ave,l=281:300@ave]
+let d15n_pom_ez_depdif = d15n_pom_ez_dep[z=@ave,l=232:251@ave] - d15n_pom_ez_pic[z=@ave,l=281:300@ave]
+let d15n_pom_utz_depdif = d15n_pom_utz_dep[z=@ave,l=232:251@ave] - d15n_pom_utz_pic[z=@ave,l=281:300@ave]
+
+let no3a_ez_picdephistdif = no3a_ez_picdep[z=@ave,l=281:300@ave] - no3a_ez_picdep[z=@ave,l=186:205@ave]
+let no3a_utz_picdephistdif = no3a_utz_picdep[z=@ave,l=281:300@ave] - no3a_utz_picdep[z=@ave,l=186:205@ave]
+let nsta_ez_picdephistdif = nsta_ez_picdep[z=@ave,l=281:300@ave] - nsta_ez_picdep[z=@ave,l=186:205@ave]
+let nsta_utz_picdephistdif = nsta_utz_picdep[z=@ave,l=281:300@ave] - nsta_utz_picdep[z=@ave,l=186:205@ave]
+let d15n_no3_ez_picdephistdif = d15n_no3_ez_picdep[z=@ave,l=281:300@ave] - d15n_no3_ez_picdep[z=@ave,l=186:205@ave]
+let d15n_no3_utz_picdephistdif = d15n_no3_utz_picdep[z=@ave,l=281:300@ave] - d15n_no3_utz_picdep[z=@ave,l=186:205@ave]
+let d15n_pom_ez_picdephistdif = d15n_pom_ez_picdep[z=@ave,l=281:300@ave] - d15n_pom_ez_picdep[z=@ave,l=186:205@ave]
+let d15n_pom_utz_picdephistdif = d15n_pom_utz_picdep[z=@ave,l=281:300@ave] - d15n_pom_utz_picdep[z=@ave,l=186:205@ave]
+
+let no3a_ez_futhistdif = no3a_ez_fut[z=@ave,l=232:251@ave] - no3a_ez_fut[z=@ave,l=137:156@ave]
+let no3a_utz_futhistdif = no3a_utz_fut[z=@ave,l=232:251@ave] - no3a_utz_fut[z=@ave,l=137:156@ave]
+let nsta_ez_futhistdif = nsta_ez_fut[z=@ave,l=232:251@ave] - nsta_ez_fut[z=@ave,l=137:156@ave]
+let nsta_utz_futhistdif = nsta_utz_fut[z=@ave,l=232:251@ave] - nsta_utz_fut[z=@ave,l=137:156@ave]
+let d15n_no3_ez_futhistdif = d15n_no3_ez_fut[z=@ave,l=232:251@ave] - d15n_no3_ez_fut[z=@ave,l=137:156@ave]
+let d15n_no3_utz_futhistdif = d15n_no3_utz_fut[z=@ave,l=232:251@ave] - d15n_no3_utz_fut[z=@ave,l=137:156@ave]
+let d15n_pom_ez_futhistdif = d15n_pom_ez_fut[z=@ave,l=232:251@ave] - d15n_pom_ez_fut[z=@ave,l=137:156@ave]
+let d15n_pom_utz_futhistdif = d15n_pom_utz_fut[z=@ave,l=232:251@ave] - d15n_pom_utz_fut[z=@ave,l=137:156@ave]
+
+let no3a_ez_dephistdif = no3a_ez_dep[z=@ave,l=232:251@ave] - no3a_ez_dep[z=@ave,l=137:156@ave]
+let no3a_utz_dephistdif = no3a_utz_dep[z=@ave,l=232:251@ave] - no3a_utz_dep[z=@ave,l=137:156@ave]
+let nsta_ez_dephistdif = nsta_ez_dep[z=@ave,l=232:251@ave] - nsta_ez_dep[z=@ave,l=137:156@ave]
+let nsta_utz_dephistdif = nsta_utz_dep[z=@ave,l=232:251@ave] - nsta_utz_dep[z=@ave,l=137:156@ave]
+let d15n_no3_ez_dephistdif = d15n_no3_ez_dep[z=@ave,l=232:251@ave] - d15n_no3_ez_dep[z=@ave,l=137:156@ave]
+let d15n_no3_utz_dephistdif = d15n_no3_utz_dep[z=@ave,l=232:251@ave] - d15n_no3_utz_dep[z=@ave,l=137:156@ave]
+let d15n_pom_ez_dephistdif = d15n_pom_ez_dep[z=@ave,l=232:251@ave] - d15n_pom_ez_dep[z=@ave,l=137:156@ave]
+let d15n_pom_utz_dephistdif = d15n_pom_utz_dep[z=@ave,l=232:251@ave] - d15n_pom_utz_dep[z=@ave,l=137:156@ave]
+
+set mem/size=4000
+save/file=figure2D_picdep_no3_signal_usingPAR.nc/clobber no3a_ez_picdepdif
+save/file=figure2D_picdep_no3_signal_usingPAR.nc/append no3a_utz_picdepdif
+save/file=figure2D_picdep_no3_signal_usingPAR.nc/append no3a_ez_picdephistdif
+save/file=figure2D_picdep_no3_signal_usingPAR.nc/append no3a_utz_picdephistdif
+save/file=figure2D_picdep_nstar_signal_usingPAR.nc/clobber nsta_ez_picdepdif
+save/file=figure2D_picdep_nstar_signal_usingPAR.nc/append nsta_utz_picdepdif
+save/file=figure2D_picdep_nstar_signal_usingPAR.nc/append nsta_ez_picdephistdif
+save/file=figure2D_picdep_nstar_signal_usingPAR.nc/append nsta_utz_picdephistdif
+save/file=figure2D_picdep_d15nno3_signal_usingPAR.nc/clobber d15n_no3_ez_picdepdif
+save/file=figure2D_picdep_d15nno3_signal_usingPAR.nc/append d15n_no3_utz_picdepdif
+save/file=figure2D_picdep_d15nno3_signal_usingPAR.nc/append d15n_no3_ez_picdephistdif
+save/file=figure2D_picdep_d15nno3_signal_usingPAR.nc/append d15n_no3_utz_picdephistdif
+save/file=figure2D_picdep_d15npom_signal_usingPAR.nc/clobber d15n_pom_ez_picdepdif
+save/file=figure2D_picdep_d15npom_signal_usingPAR.nc/append d15n_pom_utz_picdepdif
+save/file=figure2D_picdep_d15npom_signal_usingPAR.nc/append d15n_pom_ez_picdephistdif
+save/file=figure2D_picdep_d15npom_signal_usingPAR.nc/append d15n_pom_utz_picdephistdif
+
+save/file=figure2D_cc_no3_signal_usingPAR.nc/clobber no3a_ez_futdif
+save/file=figure2D_cc_no3_signal_usingPAR.nc/append no3a_utz_futdif
+save/file=figure2D_cc_no3_signal_usingPAR.nc/append no3a_ez_futhistdif
+save/file=figure2D_cc_no3_signal_usingPAR.nc/append no3a_utz_futhistdif
+save/file=figure2D_cc_nstar_signal_usingPAR.nc/clobber nsta_ez_futdif
+save/file=figure2D_cc_nstar_signal_usingPAR.nc/append nsta_utz_futdif
+save/file=figure2D_cc_nstar_signal_usingPAR.nc/append nsta_ez_futhistdif
+save/file=figure2D_cc_nstar_signal_usingPAR.nc/append nsta_utz_futhistdif
+save/file=figure2D_cc_d15nno3_signal_usingPAR.nc/clobber d15n_no3_ez_futdif
+save/file=figure2D_cc_d15nno3_signal_usingPAR.nc/append d15n_no3_utz_futdif
+save/file=figure2D_cc_d15nno3_signal_usingPAR.nc/append d15n_no3_ez_futhistdif
+save/file=figure2D_cc_d15nno3_signal_usingPAR.nc/append d15n_no3_utz_futhistdif
+save/file=figure2D_cc_d15npom_signal_usingPAR.nc/clobber d15n_pom_ez_futdif
+save/file=figure2D_cc_d15npom_signal_usingPAR.nc/append d15n_pom_utz_futdif
+save/file=figure2D_cc_d15npom_signal_usingPAR.nc/append d15n_pom_ez_futhistdif
+save/file=figure2D_cc_d15npom_signal_usingPAR.nc/append d15n_pom_utz_futhistdif
+
+save/file=figure2D_ndep_no3_signal_usingPAR.nc/clobber no3a_ez_depdif
+save/file=figure2D_ndep_no3_signal_usingPAR.nc/append no3a_utz_depdif
+save/file=figure2D_ndep_no3_signal_usingPAR.nc/append no3a_ez_dephistdif
+save/file=figure2D_ndep_no3_signal_usingPAR.nc/append no3a_utz_dephistdif
+save/file=figure2D_ndep_nstar_signal_usingPAR.nc/clobber nsta_ez_depdif
+save/file=figure2D_ndep_nstar_signal_usingPAR.nc/append nsta_utz_depdif
+save/file=figure2D_ndep_nstar_signal_usingPAR.nc/append nsta_ez_dephistdif
+save/file=figure2D_ndep_nstar_signal_usingPAR.nc/append nsta_utz_dephistdif
+save/file=figure2D_ndep_d15nno3_signal_usingPAR.nc/clobber d15n_no3_ez_depdif
+save/file=figure2D_ndep_d15nno3_signal_usingPAR.nc/append d15n_no3_utz_depdif
+save/file=figure2D_ndep_d15nno3_signal_usingPAR.nc/append d15n_no3_ez_dephistdif
+save/file=figure2D_ndep_d15nno3_signal_usingPAR.nc/append d15n_no3_utz_dephistdif
+save/file=figure2D_ndep_d15npom_signal_usingPAR.nc/clobber d15n_pom_ez_depdif
+save/file=figure2D_ndep_d15npom_signal_usingPAR.nc/append d15n_pom_utz_depdif
+save/file=figure2D_ndep_d15npom_signal_usingPAR.nc/append d15n_pom_ez_dephistdif
+save/file=figure2D_ndep_d15npom_signal_usingPAR.nc/append d15n_pom_utz_dephistdif
+

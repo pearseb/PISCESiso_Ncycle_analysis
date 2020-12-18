@@ -1,0 +1,83 @@
+
+can data/all
+can var/all
+can reg/all
+
+set mem/size=1000
+
+use ETOPO_picontrol_par_heup_1801-2100.nc
+use ETOPO_future_par_heup_1851-2100.nc
+
+let par_per = par/par[k=1]*100
+
+let top1 = if heup eq 0 then 1/0 else heup
+let top2 = top1 + 50
+let bot1a = par_per[z=@loc:0.001]
+let bot2a = par_per[z=@loc:0.000001]
+let bot1b = if bot1a gt 500 then 500 else bot1a
+let bot2b = if bot2a gt 800 then 800 else bot2a
+
+let top = if bot2b le top2 then 1/0 else top2
+let bot1 = if top then bot1b else 1/0
+let bot2 = if top then bot2b else 1/0
+
+! save for plotting
+let euph_pic = top[d=1,l=@ave]
+let euph_hist = top[d=2,l=136:155@ave]
+let euph_fut = top[d=2,l=231:250@ave]
+let utz_pic = bot1[d=1,l=@ave]
+let utz_hist = bot1[d=2,l=136:155@ave]
+let utz_fut = bot1[d=2,l=231:250@ave]
+let ltz_pic = bot2[d=1,l=@ave]
+let ltz_hist = bot2[d=2,l=136:155@ave]
+let ltz_fut = bot2[d=2,l=231:250@ave]
+
+save/file=figure_depthzones.nc/clobber euph_pic, euph_hist, euph_fut
+save/file=figure_depthzones.nc/append utz_pic, utz_hist, utz_fut
+save/file=figure_depthzones.nc/append ltz_pic, ltz_hist, ltz_fut
+
+
+! create mask for euphotic zone
+let aaa1 = if par_per eq 0 then 1/0 else par_per	! mask land
+let aaa2 = if z[gz=par_per] le top then 1 else aaa1	! bottom bracket
+let aaa3 = if z[gz=par_per] gt top then 1/0 else aaa2	! top bracket
+let euph = if aaa3 gt 0 then 1 else 1/0
+
+let euph_pic = euph[d=1]
+let euph_fut = euph[d=2]
+
+set mem/size=4000
+
+save/file=ETOPO_picontrol_depthzone_mask.nc/clobber euph_pic
+save/file=ETOPO_future_depthzone_mask.nc/clobber euph_fut
+
+
+let aaa1 = if par_per eq 0 then 1/0 else par_per	! mask land
+let aaa2 = if z[gz=par_per] le top then 1/0 else aaa1	! bottom bracket
+let aaa3 = if z[gz=par_per] gt bot1 then 1/0 else aaa2	! top bracket
+let utz = if aaa3 gt 0 then 1 else 1/0
+
+let utz_pic = utz[d=1]
+let utz_fut = utz[d=2]
+
+set mem/size=4000
+
+save/file=ETOPO_picontrol_depthzone_mask.nc/append utz_pic
+save/file=ETOPO_future_depthzone_mask.nc/append utz_fut
+
+
+
+let aaa1 = if par_per eq 0 then 1/0 else par_per	! mask land
+let aaa2 = if z[gz=par_per] le bot1 then 1/0 else aaa1	! bottom bracket
+let aaa3 = if z[gz=par_per] gt bot2 then 1/0 else aaa2	! top bracket
+let ltz = if aaa3 gt 0 then 1 else 1/0
+
+let ltz_pic = ltz[d=1]
+let ltz_fut = ltz[d=2]
+
+set mem/size=4000
+
+save/file=ETOPO_picontrol_depthzone_mask.nc/append ltz_pic
+save/file=ETOPO_future_depthzone_mask.nc/append ltz_fut
+
+

@@ -1,0 +1,27 @@
+
+can data/all
+can var/all
+can reg/all
+can win/all
+
+use ETOPO_picontrol_d15no3_decomposition.nc
+use ETOPO_future_d15no3_decomposition.nc
+use ETOPO_picontrol_depthzone_mask.nc
+use ETOPO_future_depthzone_mask.nc
+
+go /users/pearseb/d15n.jnl
+
+set reg/z=150:500
+
+let d15n_pic = if utz_pic[d=3] eq 1 then d15n_no3i[d=1] else 1/0
+let d15n_fut = if utz_fut[d=4] eq 1 then d15n_no3j[d=2] else 1/0
+
+let enrich_pic = if utz_pic[d=3] eq 1 then enrichment_i[d=1] else 1/0
+let enrich_fut = if utz_fut[d=4] eq 1 then enrichment_j[d=2] else 1/0
+
+set mem/size=2000
+can reg/all
+save/file="ETOPO_fluxanalysis_results.nc"/clobber d15n_pic[z=@ave,l=281:300@ave]
+save/file="ETOPO_fluxanalysis_results.nc"/append d15n_fut[z=@ave,l=232:251@ave]
+save/file="ETOPO_fluxanalysis_results.nc"/append enrich_pic[z=@ave,l=281:300@ave]
+save/file="ETOPO_fluxanalysis_results.nc"/append enrich_fut[z=@ave,l=232:251@ave]

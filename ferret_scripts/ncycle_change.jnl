@@ -1,0 +1,146 @@
+
+can data/all
+can var/all
+can reg/all
+
+use ./ETOPO_picontrol_2nd_diad_1801-2100.nc
+use ./ETOPO_picontrol_ndep_diad_1801-2100.nc
+use ./ETOPO_future_diad_1850-2100.nc
+use ./ETOPO_future_ndep_diad_1850-2100.nc
+
+let burn = sedc*(16./122)
+
+use ETOPO_ndep_1801-2100.nc
+
+define grid/like=nfix[d=1] modgrid
+let dep2 = dep3[gt=modgrid@asn]
+let dep1 = if ph[d=1,k=1] eq 0 then 0 else dep2
+let dep = dep1*1e3*86400*365	! g N m-2 yr-1
+
+let fix = nfix[z=@din]*14*365*86400
+let den = denit[z=@din]*14*365*86400
+let sden = sdenit*14*365*86400
+let bur = burn*14*365*86400
+
+let sources_pi = fix[d=1] + dep[d=5,l=1] 
+let sources_pindep = fix[d=2] + dep[d=5] 
+let sources_fut = fix[d=3] + dep[d=5,l=1]
+let sources_futndep = fix[d=4] + dep[d=5]
+
+let sinks = den + sden + bur
+let sinks_pi = sinks[d=1]
+let sinks_pindep = sinks[d=2]
+let sinks_fut = sinks[d=3]
+let sinks_futndep = sinks[d=4]
+
+
+set reg/t="01-JAN-2081":"31-DEC-2100"
+let sources_fut_minus_pi = sources_fut[t=@ave] - sources_pi[t=@ave] 
+let sources_pindep_minus_pi = sources_pindep[t=@ave] - sources_pi[t=@ave] 
+let sources_futndep_minus_pi = sources_futndep[t=@ave] - sources_pi[t=@ave] 
+let sinks_fut_minus_pi = sinks_fut[t=@ave] - sinks_pi[t=@ave] 
+let sinks_pindep_minus_pi = sinks_pindep[t=@ave] - sinks_pi[t=@ave] 
+let sinks_futndep_minus_pi = sinks_futndep[t=@ave] - sinks_pi[t=@ave] 
+
+set win/aspect=0.5 1
+pal blue_orange
+sha/lev=(-inf)(-1,1,0.1)(inf)/title="Fut Sources" sources_fut_minus_pi; cont/o/lev=(0); go fland
+set win/aspect=0.5 2
+sha/lev=(-inf)(-1,1,0.1)(inf)/title="Fut+Ndep Sources" sources_futndep_minus_pi; cont/o/lev=(0); go fland
+
+set win/aspect=0.5 3
+sha/lev=(-inf)(-1,1,0.1)(inf)/title="Fut Sinks" sinks_fut_minus_pi; cont/o/lev=(0); go fland
+set win/aspect=0.5 4
+sha/lev=(-inf)(-1,1,0.1)(inf)/title="Fut+Ndep Sinks" sinks_futndep_minus_pi; cont/o/lev=(0); go fland
+
+
+let sources_fut_minus_pi = sources_fut[x=@din,y=@din,t=@ave] - sources_pi[x=@din,y=@din,t=@ave] 
+let sources_pindep_minus_pi = sources_pindep[x=@din,y=@din,t=@ave] - sources_pi[x=@din,y=@din,t=@ave] 
+let sources_futndep_minus_pi = sources_futndep[x=@din,y=@din,t=@ave] - sources_pi[x=@din,y=@din,t=@ave] 
+let sinks_fut_minus_pi = sinks_fut[x=@din,y=@din,t=@ave] - sinks_pi[x=@din,y=@din,t=@ave] 
+let sinks_pindep_minus_pi = sinks_pindep[x=@din,y=@din,t=@ave] - sinks_pi[x=@din,y=@din,t=@ave] 
+let sinks_futndep_minus_pi = sinks_futndep[x=@din,y=@din,t=@ave] - sinks_pi[x=@din,y=@din,t=@ave] 
+
+
+list/nohead sources_pindep_minus_pi*1e-12, sinks_pindep_minus_pi*1e-12, sources_pindep_minus_pi*1e-12 - sinks_pindep_minus_pi*1e-12
+list/nohead sources_fut_minus_pi*1e-12, sinks_fut_minus_pi*1e-12, sources_fut_minus_pi*1e-12 - sinks_fut_minus_pi*1e-12
+list/nohead sources_futndep_minus_pi*1e-12, sinks_futndep_minus_pi*1e-12, sources_futndep_minus_pi*1e-12 - sinks_futndep_minus_pi*1e-12
+
+
+let delta_dep = dep[d=5,l=281:300@ave] - dep[d=5,l=1]
+let delta_fix = fix[d=4,l=232:251@ave] - fix[d=1,l=281:300@ave]
+let delta_wcd = den[d=4,l=232:251@ave] - den[d=1,l=281:300@ave]
+let delta_sed = sden[d=4,l=232:251@ave] - sden[d=1,l=281:300@ave]
+let delta_bur = bur[d=4,l=232:251@ave] - bur[d=1,l=281:300@ave]
+let npp = (ppnewn[z=@din]+ppnewd[z=@din]+ppregn[z=@din]+ppregd[z=@din])*(16/122.0)*14*365*86400
+let delta_npp = npp[d=4,l=232:251@ave] - npp[d=1,l=281:300@ave]
+let zoo = (graz1[z=@din]+graz2[z=@din])*(16/122.0)*14*365*86400
+let delta_zoo = zoo[d=4,l=232:251@ave] - zoo[d=1,l=281:300@ave] 
+
+
+list/nohead delta_dep[x=@din,y=@din]*1e-12, delta_dep[x=@din,y=@din]/dep[d=5,x=@din,y=@din,l=1]*100
+list/nohead delta_fix[x=@din,y=@din]*1e-12, delta_fix[x=@din,y=@din]/fix[d=1,x=@din,y=@din,l=281:300@ave]*100
+list/nohead delta_wcd[x=@din,y=@din]*1e-12, delta_wcd[x=@din,y=@din]/den[d=1,x=@din,y=@din,l=281:300@ave]*100
+list/nohead delta_sed[x=@din,y=@din]*1e-12, delta_sed[x=@din,y=@din]/sden[d=1,x=@din,y=@din,l=281:300@ave]*100
+list/nohead delta_npp[x=@din,y=@din]*1e-12, delta_npp[x=@din,y=@din]/npp[d=1,x=@din,y=@din,l=281:300@ave]*100
+list/nohead delta_zoo[x=@din,y=@din]*1e-12, delta_zoo[x=@din,y=@din]/zoo[d=1,x=@din,y=@din,l=281:300@ave]*100
+list/nohead delta_bur[x=@din,y=@din]*1e-12
+
+
+set mem/size=2000
+save/file="ncycle_changes.nc"/clobber delta_dep, delta_fix, delta_wcd, delta_sed, delta_npp, delta_zoo
+
+let delta_dep = dep[d=5,l=281:300@ave] - dep[d=5,l=1]
+let delta_fix = fix[d=3,l=232:251@ave] - fix[d=1,l=281:300@ave]
+let delta_wcd = den[d=3,l=232:251@ave] - den[d=1,l=281:300@ave]
+let delta_sed = sden[d=3,l=232:251@ave] - sden[d=1,l=281:300@ave]
+let delta_bur = bur[d=3,l=232:251@ave] - bur[d=1,l=281:300@ave]
+let delta_npp = npp[d=3,l=232:251@ave] - npp[d=1,l=281:300@ave]
+let delta_zoo = zoo[d=3,l=232:251@ave] - zoo[d=1,l=281:300@ave] 
+
+
+list/nohead delta_dep[x=@din,y=@din]*1e-12
+list/nohead delta_fix[x=@din,y=@din]*1e-12
+list/nohead delta_wcd[x=@din,y=@din]*1e-12
+list/nohead delta_sed[x=@din,y=@din]*1e-12
+list/nohead delta_npp[x=@din,y=@din]*1e-12
+list/nohead delta_zoo[x=@din,y=@din]*1e-12
+
+set mem/size=2000
+save/file="ncycle_changes_climatechangeonly.nc"/clobber delta_dep, delta_fix, delta_wcd, delta_sed, delta_npp, delta_zoo
+
+let delta_dep = dep[d=5,l=300] - dep[d=5,l=1]
+let delta_fix = fix[d=2,l=281:300@ave] - fix[d=1,l=281:300@ave]
+let delta_wcd = den[d=2,l=281:300@ave] - den[d=1,l=281:300@ave]
+let delta_sed = sden[d=2,l=281:300@ave] - sden[d=1,l=281:300@ave]
+let delta_bur = bur[d=2,l=281:300@ave] - bur[d=1,l=281:300@ave]
+let delta_npp = npp[d=2,l=281:300@ave] - npp[d=1,l=281:300@ave]
+let delta_zoo = zoo[d=2,l=281:300@ave] - zoo[d=1,l=281:300@ave] 
+
+
+list/nohead delta_dep[x=@din,y=@din]*1e-12
+list/nohead delta_fix[x=@din,y=@din]*1e-12
+list/nohead delta_wcd[x=@din,y=@din]*1e-12
+list/nohead delta_sed[x=@din,y=@din]*1e-12
+list/nohead delta_npp[x=@din,y=@din]*1e-12
+list/nohead delta_zoo[x=@din,y=@din]*1e-12
+
+set mem/size=2000
+save/file="ncycle_changes_ndeponly.nc"/clobber delta_dep, delta_fix, delta_wcd, delta_sed, delta_npp, delta_zoo
+
+
+
+can win/all
+set win/aspect=1.5 1
+set vi upper; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange delta_dep; go fland
+set vi lower; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange delta_fix; go fland
+
+set win 2
+set vi upper; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange delta_wcd; go fland
+set vi lower; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange delta_sed; go fland
+
+set win 3 
+set vi upper; sha/lev=(-inf)(-10,10,0.5)(inf)/pal=blue_orange delta_npp; go fland
+set vi lower; sha/lev=(-inf)(-10,10,0.5)(inf)/pal=blue_orange delta_zoo; go fland
+
+

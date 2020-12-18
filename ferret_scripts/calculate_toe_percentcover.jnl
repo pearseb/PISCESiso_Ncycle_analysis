@@ -1,0 +1,83 @@
+can data/all
+can var/all
+can reg/all
+
+use ETOPO_ToE_picndep_depthzones.nc
+use ETOPO_ToE_fut_depthzones.nc
+use ETOPO_ToE_futndep_depthzones.nc
+use /users/pearseb/regridfiles/ETOPO_ORCA2.0_Basins_float.nc
+
+define grid/like=glomsk[d=4] grd
+
+let fix1 = fix[gx=grd@asn, gy=grd@asn]
+let npp1 = npp[gx=grd@asn, gy=grd@asn]
+let no3_ez1 = no3_ez[gx=grd@asn, gy=grd@asn]
+let no3_utz1 = no3_utz[gx=grd@asn, gy=grd@asn]
+let nst_ez1 = nst_ez[gx=grd@asn, gy=grd@asn]
+let nst_utz1 = nst_utz[gx=grd@asn, gy=grd@asn]
+let d15n_no3_ez1 = d15n_no3_ez[gx=grd@asn, gy=grd@asn]
+let d15n_no3_utz1 = d15n_no3_utz[gx=grd@asn, gy=grd@asn]
+let d15n_pom_ez1 = d15n_pom_ez[gx=grd@asn, gy=grd@asn]
+let d15n_pom_utz1 = d15n_pom_utz[gx=grd@asn, gy=grd@asn]
+
+let ocea = if glomsk[d=4] eq 1 then 1 else 1/0
+let ocean = if medmsk[d=4] eq 1 or redmsk[d=4] eq 1 or hudmsk[d=4] eq 1 then 1 else ocea
+
+let fix2 = if ocean eq 1 and fix1 gt 2100 then 2101 else fix1 
+let npp2 = if ocean eq 1 and npp1 gt 2100 then 2101 else npp1 
+let no3_ez2 = if ocean eq 1 and no3_ez1 gt 2100 then 2101 else no3_ez1 
+let no3_utz2 = if ocean eq 1 and no3_utz1 gt 2100 then 2101 else no3_utz1 
+let nst_ez2 = if ocean eq 1 and nst_ez1 gt 2100 then 2101 else nst_ez1 
+let nst_utz2 = if ocean eq 1 and nst_utz1 gt 2100 then 2101 else nst_utz1 
+let d15n_no3_ez2 = if ocean eq 1 and d15n_no3_ez1 gt 2100 then 2101 else d15n_no3_ez1 
+let d15n_no3_utz2 = if ocean eq 1 and d15n_no3_utz1 gt 2100 then 2101 else d15n_no3_utz1 
+let d15n_pom_ez2 = if ocean eq 1 and d15n_pom_ez1 gt 2100 then 2101 else d15n_pom_ez1 
+let d15n_pom_utz2 = if ocean eq 1 and d15n_pom_utz1 gt 2100 then 2101 else d15n_pom_utz1 
+
+set reg/y=-45:45
+
+let oce_area = ocean[x=@din,y=@din]
+let fix2_yr = if fix2 le ($1) then 1 else 1/0
+let npp2_yr = if npp2 le ($1) then 1 else 1/0
+let no3_ez2_yr = if no3_ez2 le ($1) then 1 else 1/0
+let no3_utz2_yr = if no3_utz2 le ($1) then 1 else 1/0
+let nst_ez2_yr = if nst_ez2 le ($1) then 1 else 1/0
+let nst_utz2_yr = if nst_utz2 le ($1) then 1 else 1/0
+let d15n_no3_ez2_yr = if d15n_no3_ez2 le ($1) then 1 else 1/0
+let d15n_no3_utz2_yr = if d15n_no3_utz2 le ($1) then 1 else 1/0
+let d15n_pom_ez2_yr = if d15n_pom_ez2 le ($1) then 1 else 1/0
+let d15n_pom_utz2_yr = if d15n_pom_utz2 le ($1) then 1 else 1/0
+
+!list/nohead fix2_yr[d=1,x=@din,y=@din]/oce_area, 		fix2_yr[d=2,x=@din,y=@din]/oce_area 		
+!list/nohead npp2_yr[d=1,x=@din,y=@din]/oce_area, 		npp2_yr[d=2,x=@din,y=@din]/oce_area 		
+!list/nohead no3_ez2_yr[d=1,x=@din,y=@din]/oce_area, 		no3_ez2_yr[d=2,x=@din,y=@din]/oce_area 		
+!list/nohead no3_utz2_yr[d=1,x=@din,y=@din]/oce_area, 		no3_utz2_yr[d=2,x=@din,y=@din]/oce_area 		
+!list/nohead nst_ez2_yr[d=1,x=@din,y=@din]/oce_area, 		nst_ez2_yr[d=2,x=@din,y=@din]/oce_area 		
+!list/nohead nst_utz2_yr[d=1,x=@din,y=@din]/oce_area, 		nst_utz2_yr[d=2,x=@din,y=@din]/oce_area 		
+!list/nohead d15n_no3_ez2_yr[d=1,x=@din,y=@din]/oce_area, 	d15n_no3_ez2_yr[d=2,x=@din,y=@din]/oce_area 	
+!list/nohead d15n_no3_utz2_yr[d=1,x=@din,y=@din]/oce_area, 	d15n_no3_utz2_yr[d=2,x=@din,y=@din]/oce_area 	
+!list/nohead d15n_pom_ez2_yr[d=1,x=@din,y=@din]/oce_area, 	d15n_pom_ez2_yr[d=2,x=@din,y=@din]/oce_area 	
+!list/nohead d15n_pom_utz2_yr[d=1,x=@din,y=@din]/oce_area, 	d15n_pom_utz2_yr[d=2,x=@din,y=@din]/oce_area 	
+
+list/nohead/norowlab/format="tab"/file="ToE_picndep_curves.txt"/append/p=5 ($1), fix2_yr[d=1,x=@din,y=@din]/oce_area, npp2_yr[d=1,x=@din,y=@din]/oce_area, no3_ez2_yr[d=1,x=@din,y=@din]/oce_area, no3_utz2_yr[d=1,x=@din,y=@din]/oce_area, nst_ez2_yr[d=1,x=@din,y=@din]/oce_area, nst_utz2_yr[d=1,x=@din,y=@din]/oce_area, d15n_no3_ez2_yr[d=1,x=@din,y=@din]/oce_area, d15n_no3_utz2_yr[d=1,x=@din,y=@din]/oce_area, d15n_pom_ez2_yr[d=1,x=@din,y=@din]/oce_area, d15n_pom_utz2_yr[d=1,x=@din,y=@din]/oce_area
+
+list/nohead/norowlab/format="tab"/file="ToE_fut_curves.txt"/append/p=5 ($1), fix2_yr[d=2,x=@din,y=@din]/oce_area, npp2_yr[d=2,x=@din,y=@din]/oce_area, no3_ez2_yr[d=2,x=@din,y=@din]/oce_area, no3_utz2_yr[d=2,x=@din,y=@din]/oce_area, nst_ez2_yr[d=2,x=@din,y=@din]/oce_area, nst_utz2_yr[d=2,x=@din,y=@din]/oce_area, d15n_no3_ez2_yr[d=2,x=@din,y=@din]/oce_area, d15n_no3_utz2_yr[d=2,x=@din,y=@din]/oce_area, d15n_pom_ez2_yr[d=2,x=@din,y=@din]/oce_area, d15n_pom_utz2_yr[d=2,x=@din,y=@din]/oce_area
+
+list/nohead/norowlab/format="tab"/file="ToE_futndep_curves.txt"/append/p=5 ($1), fix2_yr[d=3,x=@din,y=@din]/oce_area, npp2_yr[d=3,x=@din,y=@din]/oce_area, no3_ez2_yr[d=3,x=@din,y=@din]/oce_area, no3_utz2_yr[d=3,x=@din,y=@din]/oce_area, nst_ez2_yr[d=3,x=@din,y=@din]/oce_area, nst_utz2_yr[d=3,x=@din,y=@din]/oce_area, d15n_no3_ez2_yr[d=3,x=@din,y=@din]/oce_area, d15n_no3_utz2_yr[d=3,x=@din,y=@din]/oce_area, d15n_pom_ez2_yr[d=3,x=@din,y=@din]/oce_area, d15n_pom_utz2_yr[d=3,x=@din,y=@din]/oce_area
+
+!set win/aspect=0.65 1
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) fix2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 2
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) npp2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 3
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) no3_utz2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 4
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) nst_utz2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 5
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) d15n_no3_ez2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 6
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) d15n_no3_utz2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 7
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) d15n_pom_ez2[d=2]; cont/o/lev=(2000)(2050); go fland
+!set win/aspect=0.65 8
+!sha/pal=blue_orange/lev=(-inf)(1920,2100,10)(inf) d15n_pom_utz2[d=2]; cont/o/lev=(2000)(2050); go fland

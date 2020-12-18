@@ -1,0 +1,124 @@
+
+can data/all
+can var/all
+can reg/all
+
+use picontrol_2nd_diad_1801-2100.nc
+use picontrol_2nd_ptrc_1801-2100.nc
+use future_diad_1850-2100.nc
+use future_ptrc_1850-2100.nc
+
+let ztop = 10.0
+let rnc = 16.0/122.0
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!! NO3 budget !!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!
+
+! get inventories			! mmol N m-3
+let no3i = no3[d=2]
+let n15i = no3_15[d=2]
+let no3j = no3[d=4]
+let n15j = no3_15[d=4]
+
+! get biological fluxes of NO3 and 15NO3		! mmol N m-3 s-1
+let n15i_in = nitr_15nh4[d=1]
+let n15i_out = denit_15no3[d=1] + denrno3_15no3[d=1] + ppnewn_15no3[d=1]*rnc + ppnewd_15no3[d=1]*rnc
+let no3i_in = nitr[d=1]
+let no3i_out = denit[d=1] + denrno3[d=1] + ppnewn[d=1]*rnc + ppnewd[d=1]*rnc
+
+let n15j_in = nitr_15nh4[d=3]
+let n15j_out = denit_15no3[d=3] + denrno3_15no3[d=3] + ppnewn_15no3[d=3]*rnc + ppnewd_15no3[d=3]*rnc
+let no3j_in = nitr[d=3]
+let no3j_out = denit[d=3] + denrno3[d=3] + ppnewn[d=3]*rnc + ppnewd[d=3]*rnc
+
+! get change due to fluxes in and out	! mmol N m-3 s-1
+let delta_no3i = (no3i_in - no3i_out)
+let delta_n15i = (n15i_in - n15i_out)
+let delta_no3j = (no3j_in - no3j_out)
+let delta_n15j = (n15j_in - n15j_out)
+
+! calculate enrichment due to biological processes (without inventory) (raw enrichment)	! per mil 
+let enrichment_i = (delta_n15i/delta_no3i-1)*1000
+let enrichment_j = (delta_n15j/delta_no3j-1)*1000
+
+! calculate real enrichment due to biological processes (with inventory) (real enrichment)	! per mil s-1 
+let d15n_no3i = (n15i/no3i-1)*1000 
+let d15n_no3j = (n15j/no3j-1)*1000 
+let enrichreal_i = ( (delta_n15i + n15i) / (delta_no3i + no3i) -1)*1000 - d15n_no3i
+let enrichreal_j = ( (delta_n15j + n15j) / (delta_no3j + no3j) -1)*1000 - d15n_no3j
+
+! calculate change in d15n_no3 from model output
+let d15n_no3i_change = d15n_no3i[l=281:300@ave]-d15n_no3i[l=186:205@ave]
+let d15n_no3j_change = d15n_no3j[l=232:251@ave]-d15n_no3j[l=137:156@ave]
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!! OVERALL CHANGES !!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!
+
+set reg/z=150:400
+
+! compare the enrichment rate to the change in delta_d15n 
+
+!!! PI CONTROL !!!
+set reg/l=281:300
+set win/aspect=0.35 1
+set vi left; sha/title="NO3 (mmol N m-3)" no3i[z=@ave,l=@ave]; cont/o/color=red/lev=(1)(5)(10)
+set vi right; sha/lev=(-inf)(2,8,0.5)(inf)/title="d15N_NO3 (per mil)" d15n_no3i[z=@ave,l=@ave]
+set win/aspect=0.35 2
+set vi left; sha/pal=blue_orange/lev=(-inf)(-10,10,1)(inf)/title="Raw enrichment rate (per mil)" enrichment_i[z=@ave,l=@ave]; cont/o/lev=(-10,10,2)/color=black enrichment_i[z=@ave,l=@ave]
+set vi right; sha/pal=blue_orange/lev=(-inf)(-0.001,0.001,0.0001)(inf)/title="Real enrichment rate (per mil yr-1)" enrichreal_i[z=@ave,l=@ave]*86400*365
+set win/aspect=0.65 3; sha/lev=(-inf)(-0.5,0.5,0.05)(inf)/pal=blue_orange/title="Change in d15n_no3 (per mil)" d15n_no3i_change[z=@ave]
+
+!!! FUTURE !!!
+set reg/l=232:251
+set win/aspect=0.35 4
+set vi left; sha/title="NO3 (mmol N m-3)" no3j[z=@ave,l=@ave]; cont/o/color=red/lev=(1)(5)(10)
+set vi right; sha/lev=(-inf)(2,8,0.5)(inf)/title="d15N_NO3 (per mil)" d15n_no3j[z=@ave,l=@ave]
+set win/aspect=0.35 5
+set vi left; sha/pal=blue_orange/lev=(-inf)(-10,10,1)(inf)/title="Raw enrichment rate (per mil)" enrichment_j[z=@ave,l=@ave]; cont/o/lev=(-10,10,2)/color=black enrichment_j[z=@ave,l=@ave]
+set vi right; sha/pal=blue_orange/lev=(-inf)(-0.001,0.001,0.0001)(inf)/title="Real enrichment rate (per mil yr-1)" enrichreal_j[z=@ave,l=@ave]*86400*365
+set win/aspect=0.65 6; sha/lev=(-inf)(-0.5,0.5,0.05)(inf)/pal=blue_orange/title="Change in d15n_no3 (per mil)" d15n_no3j_change[z=@ave]
+
+
+set mem/size=3000
+can reg/z/l
+
+save/file=picontrol_d15nno3_decomposition.nc/clobber enrichment_i
+save/file=future_d15nno3_decomposition.nc/clobber enrichment_j
+save/file=picontrol_d15nno3_decomposition.nc/append enrichreal_i
+save/file=future_d15nno3_decomposition.nc/append enrichreal_j
+save/file=picontrol_d15nno3_decomposition.nc/append d15n_no3i
+save/file=future_d15nno3_decomposition.nc/append d15n_no3j
+
+
+sp ncrename -d X,x picontrol_d15nno3_decomposition.nc 
+sp ncrename -d Y,y picontrol_d15nno3_decomposition.nc 
+sp ncrename -v DEPTHT,depth picontrol_d15nno3_decomposition.nc 
+sp ncrename -d DEPTHT,depth picontrol_d15nno3_decomposition.nc 
+sp ncrename -v DEPTHT_bnds,depth_bnds picontrol_d15nno3_decomposition.nc 
+sp ncrename -v TIME_COUNTER,time picontrol_d15nno3_decomposition.nc 
+sp ncrename -d TIME_COUNTER,t picontrol_d15nno3_decomposition.nc 
+sp ncks -A -v nav_lon picontrol_decomp_1y_diad_1801-2100.nc picontrol_d15nno3_decomposition.nc
+sp ncks -A -v nav_lat picontrol_decomp_1y_diad_1801-2100.nc picontrol_d15nno3_decomposition.nc
+sp ncatted -O -a bounds,depth,o,c,"depth_bnds" picontrol_d15nno3_decomposition.nc picontrol_d15nno3_decomposition.nc
+sp ncatted -O -a coordinates,ENRICHMENT_I,o,c,"time depth nav_lat nav_lon" picontrol_d15nno3_decomposition.nc picontrol_d15nno3_decomposition.nc
+sp ncatted -O -a coordinates,ENRICHREAL_I,o,c,"time depth nav_lat nav_lon" picontrol_d15nno3_decomposition.nc picontrol_d15nno3_decomposition.nc
+sp ncatted -O -a coordinates,D15N_NO3I,o,c,"time depth nav_lat nav_lon" picontrol_d15nno3_decomposition.nc picontrol_d15nno3_decomposition.nc
+
+sp ncrename -d X,x future_d15nno3_decomposition.nc 
+sp ncrename -d Y,y future_d15nno3_decomposition.nc 
+sp ncrename -v DEPTHT,depth future_d15nno3_decomposition.nc 
+sp ncrename -d DEPTHT,depth future_d15nno3_decomposition.nc 
+sp ncrename -v DEPTHT_bnds,depth_bnds future_d15nno3_decomposition.nc 
+sp ncrename -v TIME_COUNTER1,time future_d15nno3_decomposition.nc 
+sp ncrename -d TIME_COUNTER1,t future_d15nno3_decomposition.nc 
+sp ncks -A -v nav_lon picontrol_decomp_1y_diad_1801-2100.nc future_d15nno3_decomposition.nc
+sp ncks -A -v nav_lat picontrol_decomp_1y_diad_1801-2100.nc future_d15nno3_decomposition.nc
+sp ncatted -O -a bounds,depth,o,c,"depth_bnds" future_d15nno3_decomposition.nc future_d15nno3_decomposition.nc
+sp ncatted -O -a coordinates,ENRICHMENT_J,o,c,"time depth nav_lat nav_lon" future_d15nno3_decomposition.nc future_d15nno3_decomposition.nc
+sp ncatted -O -a coordinates,ENRICHREAL_J,o,c,"time depth nav_lat nav_lon" future_d15nno3_decomposition.nc future_d15nno3_decomposition.nc
+sp ncatted -O -a coordinates,D15N_NO3J,o,c,"time depth nav_lat nav_lon" future_d15nno3_decomposition.nc future_d15nno3_decomposition.nc
+

@@ -1,0 +1,65 @@
+
+can data/all
+can var/all
+can reg/all
+
+use ./ETOPO_picontrol_2nd_diad_1801-2100.nc
+use ./ETOPO_picontrol_ndep_diad_1801-2100.nc
+use ./ETOPO_future_diad_1850-2100.nc
+use ./ETOPO_future_ndep_diad_1850-2100.nc
+
+
+use /users/pearseb/regridfiles/ETOPO_ORCA2.0_Basins_float.nc
+
+let burn = sedc*(16/122)
+
+! Global rates
+let nfix_ts = nfix[x=@din,y=@din,z=@din]*86400*365*14*1e-12
+let denit_ts = denit[x=@din,y=@din,z=@din]*86400*365*14*1e-12
+let sdenit_ts = sdenit[x=@din,y=@din]*86400*365*14*1e-12
+let nitr_ts = nitr[x=@din,y=@din,z=@din]*86400*365*14*1e-12
+let burn_ts = burn[x=@din,y=@din]*86400*365*14*1e-12
+
+!set win/aspect=0.8 1
+!set vi ul; plot nfix_ts[d=1], nfix_ts[d=3], nfix_ts[d=4]
+!set vi ur; plot denit_ts[d=1], denit_ts[d=3], denit_ts[d=4]
+!set vi ll; plot sdenit_ts[d=1], sdenit_ts[d=3], sdenit_ts[d=4]
+!set vi lr; plot burn_ts[d=1], burn_ts[d=3], burn_ts[d=4]
+
+use /mnt/data1/users/pearseb/NDEP/ndep_Tg_yr.nc
+define grid/like=nfix[d=1] modgrid
+let ndep = ndep_tgyr[gt=modgrid@asn]
+
+let rivn = 36.036346214100412
+let source_pi = nfix_ts[d=1] + ndep[d=6,l=1] + rivn
+let source_pindep = nfix_ts[d=2] + ndep[d=6] + rivn
+let source_fut = nfix_ts[d=3] + ndep[d=6,l=1] + rivn
+let source_futndep = nfix_ts[d=4] + ndep[d=6] + rivn
+
+let sinks = denit_ts + sdenit_ts + burn_ts
+let sinks_pi = sinks[d=1]
+let sinks_pindep = sinks[d=2]
+let sinks_fut = sinks[d=3]
+let sinks_futndep = sinks[d=4]
+
+let budget_pi = source_pi - sinks[d=1]
+let budget_pindep = source_pindep - sinks[d=2]
+let budget_fut = source_fut - sinks[d=3]
+let budget_futndep = source_futndep - sinks[d=4]
+
+!set win/aspect=0.5 2
+!plot source_pi, source_fut, source_futndep
+!set win/aspect=0.5 3
+!plot sinks[d=1], sinks[d=3], sinks[d=4]
+!set win/aspect=0.5 4
+!plot budget_pi, budget_fut, budget_futndep
+
+
+
+set mem/size=2000
+save/clobber/file="sources_and_sinks.nc" source_pi, source_pindep, source_fut, source_futndep
+save/append/file="sources_and_sinks.nc" sinks_pi, sinks_pindep, sinks_fut, sinks_futndep
+save/append/file="sources_and_sinks.nc" budget_pi, budget_pindep, budget_fut, budget_futndep
+
+
+

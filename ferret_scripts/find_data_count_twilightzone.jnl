@@ -1,0 +1,32 @@
+
+set mem/size=3000
+
+can data/all
+can var/all
+can reg/all
+
+use RafterTuerena_d15N_1x1degrees.nc
+use /users/pearseb/regridfiles/ETOPO_ORCA2.0.full_grid.nc
+use /users/pearseb/regridfiles/ETOPO_ORCA2.0_Basins_float.nc
+
+define grid/like=volume[d=2] grd
+
+let cnt1 = if count[d=1] eq 0 then 1/0 else count[d=1]
+let cnt = cnt1[gx=grd@asn, gy=grd@asn, gz=grd@asn]
+
+
+let cnt_atl = if atlmsk[d=3] eq 1 then cnt else 1/0
+let cnt_pac = if pacmsk[d=3] eq 1 then cnt else 1/0
+
+
+!!! years go from 1971 - 2018
+
+! Northern Hemisphere
+set reg/z=150:500/y=0:45
+list cnt_atl[x=@sum,y=@sum,z=@sum,l=@sum,m=@sum]
+list cnt_pac[x=@sum,y=@sum,z=@sum,l=@sum,m=@sum]
+
+! SOuthern hemisphere
+set reg/z=150:500/y=-45:0
+list cnt_atl[x=@sum,y=@sum,z=@sum,l=@sum,m=@sum]
+list cnt_pac[x=@sum,y=@sum,z=@sum,l=@sum,m=@sum]

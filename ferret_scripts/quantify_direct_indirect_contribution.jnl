@@ -1,0 +1,57 @@
+set mem/size=2000
+
+can data/all
+can var/all
+can reg/all
+
+
+use ETOPO_direct_indirect_effects.nc
+
+
+! check that indirect and direct effects sum (more or less) linearly to the total difference caused by climate change
+
+let d15nno3_dirind_sum =  d15nno3_ind_dif + d15nno3_dir_dif
+
+set win/aspect=0.4/size=1.5 1
+set vi left; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_fut_dif; cont/o/lev=0.2D; go fland
+set vi right; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_dirind_sum; cont/o/lev=0.2D; go fland
+
+
+!!! VERY SIMILAR. DIR + IND contributions basically sum to the total climate change effect
+
+! what were the changes in d15nno3 and d15npom that we see?
+
+set win/aspect=0.4/size=1.5 2
+set vi left; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_dir_dif; cont/o/lev=0.2D; go fland
+set vi right; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15nno3_ind_dif; cont/o/lev=0.2D; go fland
+
+set win/aspect=0.4/size=1.5 3
+set vi left; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15npom_dir_dif; cont/o/lev=0.2D; go fland
+set vi right; sha/lev=(-inf)(-1,1,0.05)(inf)/pal=blue_orange d15npom_ind_dif; cont/o/lev=0.2D; go fland
+
+
+! now check what the contribution of direct and indirect effects are on declines in d15n
+
+let d15nno3_fut_decl = if d15nno3_fut_dif lt 0 then d15nno3_fut_dif else 1/0
+let d15nno3_ind_decl = if d15nno3_fut_dif lt 0 then d15nno3_ind_dif else 1/0
+let d15nno3_dir_decl = if d15nno3_fut_dif lt 0 then d15nno3_dir_dif else 1/0
+
+let d15nno3_ind_contr = d15nno3_ind_decl/d15nno3_fut_decl*100
+let d15nno3_dir_contr = d15nno3_dir_decl/d15nno3_fut_decl*100
+
+let d15npom_fut_decl = if d15npom_fut_dif lt 0 then d15npom_fut_dif else 1/0
+let d15npom_ind_decl = if d15npom_fut_dif lt 0 then d15npom_ind_dif else 1/0
+let d15npom_dir_decl = if d15npom_fut_dif lt 0 then d15npom_dir_dif else 1/0
+
+let d15npom_ind_contr = d15npom_ind_decl/d15npom_fut_decl*100
+let d15npom_dir_contr = d15npom_dir_decl/d15npom_fut_decl*100
+
+
+set win/aspect=0.4/size=1.5 4
+set vi left; sha/lev=(-inf)(-100,100,5)(inf)/pal=blue_orange d15nno3_dir_contr; cont/o/lev=(-200,200,20); go fland
+set vi right; sha/lev=(-inf)(-100,100,5)(inf)/pal=blue_orange d15nno3_ind_contr; cont/o/lev=(-200,200,20); go fland
+
+set win/aspect=0.4/size=1.5 5
+set vi left; sha/lev=(-inf)(-100,100,5)(inf)/pal=blue_orange d15npom_dir_contr; cont/o/lev=(-200,200,20); go fland
+set vi right; sha/lev=(-inf)(-100,100,5)(inf)/pal=blue_orange d15npom_ind_contr; cont/o/lev=(-200,200,20); go fland
+

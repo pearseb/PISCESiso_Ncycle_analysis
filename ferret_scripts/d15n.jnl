@@ -1,0 +1,23 @@
+let d15n_zoo1 = (zoo_15/zoo-1)*1000
+let d15n_zoo21 = (zoo2_15/zoo2-1)*1000
+let d15n_phy1 = (phy_15/phy-1)*1000
+let d15n_phy21 = (phy2_15/phy2-1)*1000
+let d15n_doc1 = (doc_15/doc-1)*1000
+let d15n_poc1 = (poc_15/poc-1)*1000
+let d15n_goc1 = (goc_15/goc-1)*1000
+let d15n_nh41 = (nh4_15/nh4-1)*1000
+let d15n_no31 = (no3_15/no3-1)*1000
+let d15n_pom1 = ((poc_15+goc_15)/(poc+goc)-1)*1000
+let d15n_pn1 = ((poc_15+goc_15+phy_15+phy2_15+zoo_15+zoo2_15)/(poc+goc+phy+phy2+zoo+zoo2)-1)*1000
+
+let d15n_zoo = if abs(d15n_zoo1) gt 50.0 then 1/0 else d15n_zoo1
+let d15n_zoo2 = if abs(d15n_zoo21) gt 50.0 then 1/0 else d15n_zoo21  
+let d15n_phy = if abs(d15n_phy1) gt 50.0 then 1/0 else d15n_phy1  
+let d15n_phy2 = if abs(d15n_phy21) gt 50.0 then 1/0 else d15n_phy21  
+let d15n_doc = if abs(d15n_doc1) gt 50.0 then 1/0 else d15n_doc1  
+let d15n_poc = if abs(d15n_poc1) gt 50.0 then 1/0 else d15n_poc1  
+let d15n_goc = if abs(d15n_goc1) gt 50.0 then 1/0 else d15n_goc1  
+let d15n_nh4 = if abs(d15n_nh41) gt 50.0 then 1/0 else d15n_nh41  
+let d15n_no3 = if abs(d15n_no31) gt 50.0 then 1/0 else d15n_no31  
+let d15n_pom = if abs(d15n_pom1) gt 50.0 then 1/0 else d15n_pom1  
+let d15n_pn = if abs(d15n_pn1) gt 50.0 then 1/0 else d15n_pn1  
