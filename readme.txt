@@ -1,8 +1,8 @@
 These files contain python and ferret scripts used in the analyis for the publication:
 	
 	Buchanan PJ, Aumont O, Bopp L, Mahaffey C, and Tagliabue A (2021): 
-	"The isotopic fingerprint of declining ocean net primary production"
-	Nature Climate Change.
+	"Nitrogen isotopes fingerprint a growing nitrogen limitation of 
+         phytoplankton in a changing marine nitrogen cycle". Nature Communications.
 
 
 All scripts provided here are designed to be run using the model output, a link to which is provided in the paper.

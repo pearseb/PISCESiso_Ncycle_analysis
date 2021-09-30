@@ -2536,8 +2536,8 @@ plt.text(xx,yy,'Twilight\nZone', ha='center', va='center', transform=ax4.transAx
 plt.subplots_adjust(left=0.15, right=0.85)
 
 # savefig
-fig.savefig("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//supplementary_figures//fig-supp9.png", dpi=300, bbox_inches='tight')
-fig.savefig("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//supplementary_figures//fig-supp9_trans.png", dpi=300, bbox_inches='tight', transparent=True)
+fig.savefig("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//supplementary_figures//fig-supp12.png", dpi=300, bbox_inches='tight')
+fig.savefig("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//supplementary_figures//fig-supp12_trans.png", dpi=300, bbox_inches='tight', transparent=True)
 
 
 #%% save files

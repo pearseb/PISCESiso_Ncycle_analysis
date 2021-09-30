@@ -160,6 +160,8 @@ spr_ind = np.array( [ scs.spearmanr(np.ma.compressed(delta_no3), np.ma.compresse
 print(np.min(spr_dir[:,0]), np.max(spr_dir[:,0]))
 print(np.min(spr_ind[:,0]), np.max(spr_ind[:,0]))
 
+print(spr_dir[:,0])
+print(spr_ind[:,0])
 
 
 

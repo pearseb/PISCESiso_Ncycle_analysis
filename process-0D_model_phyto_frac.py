@@ -27,11 +27,7 @@ Defined variables
     k_n         - nitrogen uptake half-saturation coefficient
     L_lim       - mean light limitation in the euphotic zone
     Fe_lim      - mean iron limitation term in the euphotic zone
-    no3_vert    - rate of nitrogen supply through vertical mixing
-    no3_nfix    - rate of nitrogen supply through nitrogen fixation
-    d15n_vert   - isotopic signature of vertically supplied nitrogen
-    d15n_nfix   - isotopic signature of newly fixed nitrogen
-
+    
 @author: pearseb
 """
 
@@ -68,19 +64,8 @@ k_n = 1.0             # nitrogen half saturation constant for michaelis menton k
 L_lim = 0.15          # mean light limitation term over the euphotic zone in picontrol run
 Fe_lim = 0.4          # mean iron limitation term over the euphotic zone (stops excessive uptake in high nitrate zone)
 
-# recycling and export
-p_mort = 0.01       # quadratic mortality coefficient for phytoplankton
-k_mort = 0.2        # half-saturation constant for phytoplankton mortality
-f_rec = 0.4         # minimum fraction of detritus that is recycled
-T_rec = 0.035       # temperature-dependent scaler on recycling
-
 # isotopic constants
 e_npp = 5.0         # fractionation factor associated with primary production
-no3_nfix = 0.0      # mmol m-3 day-1
-no3_vert = 0.0      # mmol m-3 day-1    equivalent to 0.00915 mg C m-2 year-1 of new production
-d15n_nfix = -1.0    # delta15N signature of nitrogen fixers (alternatively deposition)
-d15n_vert = 4.0     # delta15N signature of upwelling nitrate from the thermocline
-
 
 
 #%% model
@@ -89,9 +74,15 @@ d15n_vert = 4.0     # delta15N signature of upwelling nitrate from the thermocli
 def phyto_frac_0D(maxt, dt,
                   T_c, no3_i, phy_i, d15n_no3_i, d15n_phy_i, e_npp, 
                   L_lim, Fe_lim, k_n, 
-                  no3_nfix, no3_vert, d15n_nfix, d15n_vert,
                   plot, print_solutions):
 
+    # recycling and export
+    p_mort = 0.01       # quadratic mortality coefficient for phytoplankton (mmol N m-3)-1 day-1
+    p_resp = 0.01       # linear respiration coefficient for phytoplankton  day-1
+    k_mort = 0.2        # half-saturation constant for phytoplankton mortality
+    f_rec = 0.4         # minimum fraction of detritus that is recycled
+    T_rec = 0.035       # temperature-dependent scaler on recycling
+    
     
     # initialise arrays 
     tot = np.zeros((maxt*dt))  # total nitrogen in system
@@ -129,10 +120,10 @@ def phyto_frac_0D(maxt, dt,
         # initialise arrays if at first timestep
         if i == 0:
             # nitrate and phytoplankton
-            no3[i] = no3_i + (no3_nfix + no3_vert)*dtr
+            no3[i] = no3_i
             phy[i] = no3[i]*0.02
             # retrieve no3_15 and phy_15
-            no3_15[i] = no3_i*(d15n_no3_i*1e-3+1.0) + no3_nfix*(d15n_nfix*1e-3+1.0)*dtr + no3_vert*(d15n_vert*1e-3+1.0)*dtr
+            no3_15[i] = no3_i*(d15n_no3_i*1e-3+1.0)
             phy_15[i] = phy[i]*(d15n_phy_i*1e-3+1.0)
             # get delta-15N values of nitrate and phytoplankton
             d15N_no3[i] = (no3_15[i]/no3[i]-1)*1000
@@ -143,10 +134,10 @@ def phyto_frac_0D(maxt, dt,
         
         else: # update state variables at new timestep
             # nitrate and phytoplankton
-            no3[i] = no3_n + (no3_nfix + no3_vert)*dtr
+            no3[i] = no3_n
             phy[i] = phy_n
             # 15 nitrate and phytos
-            no3_15[i] = no3_15_n + no3_nfix*(d15n_nfix*1e-3+1.0)*dtr + no3_vert*(d15n_vert*1e-3+1.0)*dtr
+            no3_15[i] = no3_15_n
             phy_15[i] = phy_15_n
             # calculate delta-15N values of nitrate and phytoplankton
             d15N_no3[i] = (no3_15_n/no3_n-1)*1000
@@ -165,8 +156,8 @@ def phyto_frac_0D(maxt, dt,
         # 2. recylcing and export
             # quadratic terms for phytoplankton respiration and mortality losses
         phy_min = max(phy[i] - 0.01, 0.0)
-        phy_resp = p_mort * phy_min * phy[i]
-        phy_mort = p_mort * phy_min/(phy[i] + k_mort) * phy[i]
+        phy_mort = p_mort * phy_min * phy[i]
+        phy_resp = p_resp * phy_min/(phy[i] + k_mort) * phy[i]
         phy_loss = phy_resp + phy_mort
             # recycling and export based on phytoplankton losses
         rec_exp = f_rec + T_rec * tgfunc   # 0.4 is base recycling:export ratio and is increased at higher temperatures
@@ -183,7 +174,7 @@ def phyto_frac_0D(maxt, dt,
         
         
     # calcualte d15N of exported matter
-    d15N_exp = (N15_exp/N_exp - 1.0)*1000
+    d15N_exp = (np.cumsum(N15_exp)/np.cumsum(N_exp) - 1.0)*1000
     
     # calcualte d15N of total matter
     d15N_tot = (tot_15/tot - 1.0)*1000
@@ -192,12 +183,13 @@ def phyto_frac_0D(maxt, dt,
     
     ### plot 
     if plot == True:
-        lab1 = ['NO$_3$', 'Phy', 'exported N']
-        lab2 = ['uptake', 'recycled', 'exported']
-        lab3 = ['$\epsilon^{15}_{npp}$']
-        lab4 = ['$\delta^{15}$N$_{NO_3}$', '$\delta^{15}$N$_{phy}$', '$\delta^{15}$N$_{exp}$', '$\delta^{15}$N$_{tot}$']
+        fslab = 15
+        lab1 = ['DIN', 'POM', 'ExpM', 'Total N']
+        lab2 = ['DIN uptake', 'POM recycled', 'POM exported']
+        lab3 = ['$\epsilon^{15}_{phy}$']
+        lab4 = ['$\delta^{15}$N$_{DIN}$', '$\delta^{15}$N$_{POM}$', '$\delta^{15}$N$_{ExpM}$', '$\delta^{15}$N$_{total}$']
         
-        plt.figure(figsize=(10,10))
+        fig = plt.figure(figsize=(10,9.5))
         gs = GridSpec(4,1)
         
         ax1 = plt.subplot(gs[0])
@@ -207,6 +199,7 @@ def phyto_frac_0D(maxt, dt,
         plt.plot(timesteps[t1:t2], no3[t1:t2], linestyle='-', label=lab1[0])
         plt.plot(timesteps[t1:t2], phy[t1:t2], linestyle='--', label=lab1[1])
         plt.plot(timesteps[t1:t2], np.cumsum(N_exp[t1:t2]), linestyle=':', label=lab1[2])
+        plt.plot(timesteps[t1:t2], tot[t1:t2], linestyle='-.', label=lab1[3])
         plt.ylim(-1,25)
         plt.ylabel('mmol m$^{-3}$')
         plt.legend()
@@ -237,7 +230,7 @@ def phyto_frac_0D(maxt, dt,
         ax4.spines['top'].set_visible(False)
         ax4.spines['right'].set_visible(False)
         ax4.tick_params(labelbottom=True)
-        plt.title('Instantaneous $\delta^{15}$N')
+        plt.title('$\delta^{15}$N')
         plt.plot(timesteps[t1:t2], d15N_no3[t1:t2], linestyle='-', label=lab4[0])
         plt.plot(timesteps[t1:t2], d15N_phy[t1:t2], linestyle='--', label=lab4[1])
         plt.plot(timesteps[t1:t2], d15N_exp[t1:t2], linestyle=':', label=lab4[2])
@@ -247,34 +240,46 @@ def phyto_frac_0D(maxt, dt,
         plt.xlabel('time/distance')
         plt.legend()
         
+        
         plt.subplots_adjust(top=0.95, hspace=0.3)
+        
+        
+        xx = 0.025; yy=1.025
+        plt.text(xx,yy,'a', transform=ax1.transAxes, va='center', ha='center', fontsize=fslab+2, fontweight='bold')
+        plt.text(xx,yy,'b', transform=ax2.transAxes, va='center', ha='center', fontsize=fslab+2, fontweight='bold')
+        plt.text(xx,yy,'c', transform=ax3.transAxes, va='center', ha='center', fontsize=fslab+2, fontweight='bold')
+        plt.text(xx,yy,'d', transform=ax4.transAxes, va='center', ha='center', fontsize=fslab+2, fontweight='bold')
     
     
     if print_solutions == True:
         print('no3 = ', no3[i], 'd15N-no3 = ', d15N_no3[i], 'max d15N-no3 = ', np.max(d15N_no3))
-        print('phy = ', phy[i], 'd15N-phy = ', d15N_phy[i])
+        print('pon = ', phy[i], 'd15N-pon = ', d15N_phy[i])
         print('exp = ', np.sum(N_exp), 'd15N-exp = ', d15N_exp[i])
         print('tot = ', tot[i], 'd15N-tot = ', d15N_tot[i])
-        print('d15N-no3 minus d15N-phy = ', d15N_no3[i] - d15N_phy[i])
+        print('d15N-no3 minus d15N-pon = ', d15N_no3[i] - d15N_phy[i])
 
     
-    return d15N_no3, d15N_exp
+    return d15N_no3, d15N_exp, fig
 
 
 #%% produce figures informing schematic (Figure 3d)
 
 no3_i = 20
-(out1_d15N_no3, out1_d15N_exp) = phyto_frac_0D(maxt, dt, 
+(out1_d15N_no3, out1_d15N_exp, fig) = phyto_frac_0D(maxt, dt, 
                                                T_c, no3_i, phy_i, d15n_no3_i, d15n_phy_i, e_npp,
                                                L_lim, Fe_lim, k_n,
-                                               no3_nfix, no3_vert, d15n_nfix, d15n_vert,
                                                plot=True, print_solutions=True)
 
+os.chdir("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//figures")
+fig.savefig('fig-supp10.png', dpi=300, bbox_to_inches='tight')
+fig.savefig('fig-supp10.eps', dpi=300, bbox_to_inches='tight')
+fig.savefig('fig-supp10_trans.png', dpi=300, bbox_to_inches='tight', transparent=True)
+
+
 no3_i = 10
-(out2_d15N_no3, out2_d15N_exp) = phyto_frac_0D(maxt, dt, 
+(out2_d15N_no3, out2_d15N_exp, fig) = phyto_frac_0D(maxt, dt, 
                                                T_c, no3_i, phy_i, d15n_no3_i, d15n_phy_i, e_npp,
                                                L_lim, Fe_lim, k_n,
-                                               no3_nfix, no3_vert, d15n_nfix, d15n_vert,
                                                plot=True, print_solutions=True)
 
 fig = plt.figure(figsize=(8,3))
@@ -307,7 +312,6 @@ for xx,nit in tqdm(enumerate(no3)):
     (tmp_d15N_no3, tmp_d15N_exp) = phyto_frac_0D(maxt, dt, T_c, 
                                                  nit, phy_i, d15n_no3_i, d15n_phy_i, e_npp,
                                                  L_lim, Fe_lim, k_n,
-                                                 no3_nfix, no3_vert, d15n_nfix, d15n_vert,
                                                  plot=False, print_solutions=False)
     out_d15N_no3[xx] = tmp_d15N_no3[-1]
     out_d15N_exp[xx] = tmp_d15N_exp[-1]
@@ -354,7 +358,6 @@ for xx,nit in tqdm(enumerate(no3)):
         (tmp_d15N_no3, tmp_d15N_exp) = phyto_frac_0D(maxt, dt, t_c, 
                                                      nit, phy_i, d15n_no3_i, d15n_phy_i, e_npp,
                                                      L_lim, Fe_lim, k_n,
-                                                     no3_nfix, no3_vert, d15n_nfix, d15n_vert,
                                                      plot=False, print_solutions=False)
         out_d15N_no3[xx,yy] = tmp_d15N_no3[-1]
         out_d15N_exp[xx,yy] = tmp_d15N_exp[-1]
@@ -443,6 +446,6 @@ cbar1.set_label('$\Delta$ $\delta^{15}$N$_{POM}$ (\u2030)', fontsize=fslab)
 plt.clabel(c1, manual=True, fontsize=fstic, fmt='%i')
 
 os.chdir("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//supplementary_figures")
-fig.savefig('fig-supp8.png', dpi=300, bbox_inches='tight')
-fig.savefig('fig-supp8.eps', dpi=300, bbox_inches='tight')
-fig.savefig('fig-supp8_trans.png', dpi=300, bbox_inches='tight', transparent=True)
+fig.savefig('fig-supp11.png', dpi=300, bbox_inches='tight')
+fig.savefig('fig-supp11.eps', dpi=300, bbox_inches='tight')
+fig.savefig('fig-supp11_trans.png', dpi=300, bbox_inches='tight', transparent=True)

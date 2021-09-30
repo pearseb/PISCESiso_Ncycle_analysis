@@ -135,9 +135,9 @@ plt.text(0.35,0.7, "N = %i"%(len(np.ma.ravel(d15n_obs))-np.ma.count_masked(d15n_
 #%%
 
 os.chdir('C:\\Users\\pearseb\\Dropbox\\PostDoc\\my articles\\d15N and d13C in PISCES\\scripts_for_publication\\supplementary_figures')
-fig.savefig('fig-supp1.png', dpi=300, bbox_inches='tight')
-fig.savefig('fig-supp1.pdf', dpi=300, bbox_inches='tight')
-fig.savefig('fig-supp1_trans.png', dpi=300, bbox_inches='tight', transparent=True)
+fig.savefig('fig-supp2.png', dpi=300, bbox_inches='tight')
+fig.savefig('fig-supp2.pdf', dpi=300, bbox_inches='tight')
+fig.savefig('fig-supp2_trans.png', dpi=300, bbox_inches='tight', transparent=True)
 
 
 #%%

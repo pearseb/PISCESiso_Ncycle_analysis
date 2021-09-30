@@ -111,7 +111,7 @@ fslab = 15
 alf = 0.7
 wid=0.5
 
-
+cm = 1/2.54  # centimeters in inches
 fig = plt.figure(figsize=(14,10), facecolor='w')
 gs = GridSpec(20,10)
 
@@ -227,7 +227,8 @@ plt.text(xx,yy, 'g)', fontsize=fslab+2, va='center', ha='center', transform=ax7.
 
 os.chdir("C://Users//pearseb//Dropbox//PostDoc//my articles//d15N and d13C in PISCES//scripts_for_publication//figures")
 fig.savefig('fig-main1.png', dpi=300, bbox_to_inches='tight')
-fig.savefig('fig-main1.eps', dpi=300, bbox_to_inches='tight')
+fig.savefig('fig-main1.eps', format='eps', dpi=300)
+fig.savefig('fig-main1.pdf', dpi=300)
 fig.savefig('fig-main1_trans.png', dpi=300, bbox_to_inches='tight', transparent=True)
 
 
