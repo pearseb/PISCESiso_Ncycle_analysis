@@ -1,8 +1,8 @@
 These files contain python and ferret scripts used in the analyis for the publication:
 	
 	Buchanan PJ, Aumont O, Bopp L, Mahaffey C, and Tagliabue A (2021): 
-	"An isotopic fingerprint of increasingly nitrogen-limited phytoplankton 
-         in a changing oceanic nitrogen cycle". Nature Communications.
+	"Impact of intensifying nitrogen limitation of ocean net primary 
+         production is fingerprinted by nitrogen isotopes". Nature Communications.
 
 
 All scripts provided here are designed to be run using the model output, a link to which is provided in the paper.
